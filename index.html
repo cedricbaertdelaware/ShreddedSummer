@@ -348,20 +348,22 @@ function App(){
       ),
       e("div",{className:"crd ai",key:"meals",style:{animationDelay:"50ms"}},
         e("div",{className:"ct"},"Maaltijden"),
-        mi.length===0?e("div",{className:"memp"},"Nog niets ingevoerd vandaag"):null,
-        mi.map(function(x){const id=x[0],it=x[1];return e("div",{key:id,className:"mrow"},
-          e("div",{className:"mrl"},
-            e("button",{className:"mdel",onClick:function(){delM(id)}},"\u00d7"),
-            e("div",{style:{minWidth:0}},
-              e("div",{className:"mname"},it.name+(it.qty>1?" (\u00d7"+it.qty+")":"")),
-              e("div",{className:"mpor"},it.por||it.portion)
+        e("div",{style:{maxHeight:220,overflowY:"auto"}},
+          mi.length===0?e("div",{className:"memp"},"Nog niets ingevoerd vandaag"):null,
+          mi.map(function(x){const id=x[0],it=x[1];return e("div",{key:id,className:"mrow"},
+            e("div",{className:"mrl"},
+              e("button",{className:"mdel",onClick:function(){delM(id)}},"\u00d7"),
+              e("div",{style:{minWidth:0}},
+                e("div",{className:"mname"},it.name+(it.qty>1?" (\u00d7"+it.qty+")":"")),
+                e("div",{className:"mpor"},it.por||it.portion)
+              )
+            ),
+            e("div",{className:"mri"},
+              e("div",{className:"mkc"},Math.round(it.kcal*(it.qty||1))+" kcal"),
+              e("div",{className:"mpr"},Math.round(it.prot*(it.qty||1))+"g prot")
             )
-          ),
-          e("div",{className:"mri"},
-            e("div",{className:"mkc"},Math.round(it.kcal*(it.qty||1))+" kcal"),
-            e("div",{className:"mpr"},Math.round(it.prot*(it.qty||1))+"g prot")
-          )
-        )})
+          )})
+        )
       ),
       e("button",{key:"add",className:"abtn",onClick:function(){setShowAdd(true)}},"+  Voeg item toe"),
       anyOv?e("div",{key:"warn",className:"warn"},
