@@ -111,7 +111,7 @@ body{height:100%;overflow:hidden;background:#111827;font-family:'DM Sans',-apple
 .pbtn:active{transform:scale(.98);opacity:.9}
 .sbtn2{margin:0 16px 12px;padding:13px;border-radius:14px;background:var(--card);color:var(--text);font-size:13px;font-weight:600;border:1px solid var(--brd);cursor:pointer;width:calc(100% - 32px);font-family:inherit}
 .sbtn2:active{background:var(--brd)}
-.nav{padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--brd);display:flex;justify-content:space-around;margin-top:auto;background:var(--bg);position:sticky;bottom:0}
+.nav{padding:8px 16px 12px;border-top:1px solid var(--brd);display:flex;justify-content:space-around;margin-top:auto;background:var(--bg);position:sticky;bottom:0}
 .ni{text-align:center;cursor:pointer;padding:6px 20px;transition:all .15s}
 .ndot{width:5px;height:5px;border-radius:50%;margin:0 auto 6px;transition:all .2s}
 .ndot.on{background:var(--acc);width:20px;border-radius:3px}
@@ -119,10 +119,10 @@ body{height:100%;overflow:hidden;background:#111827;font-family:'DM Sans',-apple
 .nlbl{font-size:11px;font-weight:500;transition:color .15s}
 .nlbl.on{color:var(--acc)}
 .nlbl.off{color:var(--t3)}
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:100;animation:fi .15s;backdrop-filter:blur(4px)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;z-index:100;animation:fi .15s;backdrop-filter:blur(4px)}
 @keyframes fi{from{opacity:0}to{opacity:1}}
-.mo{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:85dvh;overflow:auto;padding:24px 20px 36px;animation:su .25s cubic-bezier(.4,0,.2,1)}
-@keyframes su{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mo{background:var(--card);border-radius:0 0 24px 24px;width:100%;max-width:430px;max-height:50dvh;overflow:auto;padding:20px 20px 24px;animation:sd .25s cubic-bezier(.4,0,.2,1);margin-top:env(safe-area-inset-top)}
+@keyframes sd{from{transform:translateY(-40px);opacity:0}to{transform:translateY(0);opacity:1}}
 .moh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .mot{font-size:18px;font-weight:700}
 .moc{cursor:pointer;font-size:20px;color:var(--t3);background:var(--bg);border:none;padding:6px 10px;border-radius:10px;transition:background .15s}
@@ -144,7 +144,7 @@ body{height:100%;overflow:hidden;background:#111827;font-family:'DM Sans',-apple
 .mpbtn{width:100%;padding:14px;border-radius:14px;background:var(--acc);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:inherit;margin-top:20px}
 .msbtn{width:100%;padding:12px;border-radius:14px;background:var(--bg);color:var(--text);font-size:13px;font-weight:600;border:1px solid var(--brd);cursor:pointer;font-family:inherit;margin-top:8px}
 .ef{text-align:center;padding:24px;color:var(--t3);font-size:13px}
-.cnt{flex:1;overflow-y:auto;padding-bottom:8px}
+.cnt{flex:1;overflow-y:auto;padding-bottom:20px}
 .cathdr{font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;padding:12px 0 6px;border-bottom:1px solid var(--brd)}
 </style>
 </head>
@@ -169,7 +169,8 @@ const FOOD_DB=[
 {id:"spaghetti",name:"Spaghetti bolognese",por:"groot bord",kcal:680,prot:35,kh:75,vet:22,cat:"avondeten"},
 {id:"soep",name:"Soep (groenten)",por:"kom 300ml",kcal:120,prot:4,kh:15,vet:5,cat:"lunch"},
 {id:"kipfilet_za",name:"Kipfilet zoete aardappel gerecht",por:"volledig",kcal:620,prot:45,kh:42,vet:18,cat:"avondeten"},
-{id:"pasta_ingrid",name:"Pasta tante Ingrid",por:"grote portie",kcal:750,prot:28,kh:80,vet:30,cat:"avondeten"},
+{id:"biefstuk_za",name:"Biefstuk zoete aardappel gerecht",por:"volledig",kcal:710,prot:42,kh:40,vet:30,cat:"avondeten"},
+{id:"pasta_ingrid",name:"Pasta tante Ingrid",por:"pasta, courgette, champignons, spek, tomatensaus, scampi",kcal:720,prot:38,kh:74,vet:24,cat:"avondeten"},
 {id:"pasta_brenda",name:"Pasta Brenda",por:"grote portie",kcal:820,prot:32,kh:72,vet:38,cat:"avondeten"},
 {id:"pitta",name:"Pitta lam look + groenten",por:"volledig",kcal:720,prot:38,kh:65,vet:30,cat:"lunch"},
 {id:"durum2",name:"Durum lam look + groenten",por:"volledig",kcal:780,prot:40,kh:70,vet:32,cat:"lunch"},
@@ -207,10 +208,12 @@ function fmt(d){return d.getDate()+" "+MN[d.getMonth()]}
 function wKey(m){return m.getFullYear()+"-"+String(m.getMonth()+1).padStart(2,"0")+"-"+String(m.getDate()).padStart(2,"0")}
 function localDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function calcSp(sp){const f=[];sp.forEach(function(s,i){if(s==="fitness")f.push(i)});const n=f.length,r={};if(n>=1)r[f[0]]="push";if(n>=2)r[f[1]]="pull";if(n>=3)r[f[2]]="legs";for(let i=3;i<n;i++)r[f[i]]="full body";return r}
+var BURN_PER_MIN={fitness:6,tennis:8.5,padel:7.5};
+function calcBurn(sport,durMin){var rate=BURN_PER_MIN[sport]||0;return Math.round(rate*durMin)}
 const SK="ss2";
 function ld(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):{}}catch(x){return{}}}
 function sv(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(x){}}
-function xcsv(s){const h="Datum,Sport,Split,Duur (min)\n";const r=s.map(function(x){return x.date+","+x.sport+","+(x.split||"")+","+x.dur}).join("\n");const b=new Blob([h+r],{type:"text/csv"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="sessies.csv";a.click();URL.revokeObjectURL(u)}
+function xcsv(s){const h="Datum,Sport,Split,Duur (min),Kcal verbrand\n";const r=s.map(function(x){return x.date+","+x.sport+","+(x.split||"")+","+x.dur+","+(x.burn||calcBurn(x.sport,x.dur))}).join("\n");const b=new Blob([h+r],{type:"text/csv"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="sessies.csv";a.click();URL.revokeObjectURL(u)}
 
 function App(){
   const[tab,setTab]=useState("planning");
@@ -252,7 +255,7 @@ function App(){
   const setSport=function(i,s){upd(function(w){w.sports[i]=s;return w});if(s==="fitness"||s==="tennis"){setSH(1);setSM2(0)}else if(s==="padel"){setSH(1);setSM2(30)}};
   const addM=function(f,q){q=q||1;const id=f.id+"_"+Date.now();upd(function(w){if(!w.meals[sel])w.meals[sel]={};w.meals[sel][id]=Object.assign({},f,{qty:q});return w});setShowAdd(false);setSrch("");setAq({})};
   const delM=function(id){upd(function(w){delete w.meals[sel][id];return w})};
-  const logS=function(){const dur=sH*60+sM2;const sport=wd.sports[sel];const spl=sp[sel]||null;const dt=localDate(ds[sel]);upd(function(w){if(!w.sessions)w.sessions=[];const ex=w.sessions.findIndex(function(s){return s.date===dt});const en={date:dt,sport:sport||"fitness",split:spl,dur:dur};if(ex>=0)w.sessions[ex]=en;else w.sessions.push(en);return w})};
+  const logS=function(){const dur=sH*60+sM2;const sport=wd.sports[sel];const spl=sp[sel]||null;const dt=localDate(ds[sel]);const burn=calcBurn(sport,dur);upd(function(w){if(!w.sessions)w.sessions=[];const ex=w.sessions.findIndex(function(s){return s.date===dt});const en={date:dt,sport:sport||"fitness",split:spl,dur:dur,burn:burn};if(ex>=0)w.sessions[ex]=en;else w.sessions.push(en);return w})};
   const delS=function(date){setData(function(p){const nd=JSON.parse(JSON.stringify(p));Object.keys(nd).forEach(function(wk){if(nd[wk].sessions){nd[wk].sessions=nd[wk].sessions.filter(function(s){return s.date!==date})}});sv(nd);return nd})};
   const logW=function(){const w=parseFloat(wIn);if(isNaN(w))return;upd(function(d){d.weight=w;return d});setShowW(false);setWIn("")};
   const togG=function(it){upd(function(w){if(!w.gc)w.gc={};w.gc[it]=!w.gc[it];return w})};
@@ -311,7 +314,8 @@ function App(){
             )
           ),
           e("button",{className:"lbtn"+(slog?" done":""),onClick:logS},slog?"Gelogd \u2713":"Log sessie")
-        )
+        ),
+        e("div",{style:{marginTop:8,fontSize:12,color:"var(--acc)",fontWeight:600,textAlign:"center"}},"\u{1F525} ~"+calcBurn(wd.sports[sel],sH*60+sM2)+" kcal verbranding")
       ):null,
       rec.length>0?e("div",{className:"crd2 ai",key:"rec",style:{animationDelay:"100ms"}},
         e("div",{className:"rlbl"},"Recente sessies"),
@@ -319,9 +323,10 @@ function App(){
           const d=new Date(s.date+"T12:00:00");
           const l=["Zo","Ma","Di","Wo","Do","Vr","Za"][d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()];
           const du=Math.floor(s.dur/60)+"u"+String(s.dur%60).padStart(2,"0");
+          const bn=s.burn||calcBurn(s.sport,s.dur);
           const pc=s.sport==="tennis"?"pill-b":s.sport==="padel"?"pill-a":"pill-g";
           const pt=s.split?s.split.charAt(0).toUpperCase()+s.split.slice(1):s.sport.charAt(0).toUpperCase()+s.sport.slice(1);
-          return e("div",{key:i,className:"rrow"},e("div",{className:"rrl"},e("span",{className:"pill "+pc},pt),e("span",{className:"rrd"},l)),e("div",{style:{display:"flex",alignItems:"center",gap:10}},e("span",{className:"rrt"},du),e("button",{className:"mdel",onClick:function(){delS(s.date)},style:{width:20,height:20,fontSize:12,borderRadius:6}},"\u00d7")))
+          return e("div",{key:i,className:"rrow"},e("div",{className:"rrl"},e("span",{className:"pill "+pc},pt),e("span",{className:"rrd"},l)),e("div",{style:{display:"flex",alignItems:"center",gap:10}},e("span",{style:{fontSize:11,color:"var(--acc)"}},bn+" kcal"),e("span",{className:"rrt"},du),e("button",{className:"mdel",onClick:function(){delS(s.date)},style:{width:20,height:20,fontSize:12,borderRadius:6}},"\u00d7")))
         })
       ):null
     ];
@@ -376,14 +381,16 @@ function App(){
               filtGrouped.map(function(g,i){
                 if(g.type==="header")return e("div",{key:"h_"+g.cat,className:"cathdr"},catLabels[g.cat]||g.cat);
                 const f=g.food;
-                return e("div",{key:f.id,className:"frow",onClick:function(){if(f.adj){setAq(function(p){const n=Object.assign({},p);n[f.id]=p[f.id]!==undefined?undefined:f.dq;return n})}else addM(f)}},
-                  e("div",null,e("div",{className:"fn"},f.name),e("div",{className:"fi2"},f.por+" \u2014 "+f.kcal+" kcal \u00b7 "+f.prot+"g eiwit")),
-                  f.adj&&aq[f.id]!==undefined?e("div",{className:"arow",onClick:function(ev){ev.stopPropagation()}},
-                    e("button",{className:"arb",onClick:function(){setAq(function(p){const n=Object.assign({},p);n[f.id]=Math.max(1,(p[f.id]||f.dq)-1);return n})}},"-"),
-                    e("span",{className:"arv"},aq[f.id]),
-                    e("button",{className:"arb",onClick:function(){setAq(function(p){const n=Object.assign({},p);n[f.id]=(p[f.id]||f.dq)+1;return n})}},"+"),
-                    e("button",{className:"ara",onClick:function(){addM(f,aq[f.id])}},"+")
-                  ):e("div",{className:"fp"},"+")
+                var defQ=f.dq||1;
+                var curQ=aq[f.id]!==undefined?aq[f.id]:defQ;
+                return e("div",{key:f.id,className:"frow"},
+                  e("div",{style:{flex:1,minWidth:0}},e("div",{className:"fn"},f.name),e("div",{className:"fi2"},f.por+" \u2014 "+f.kcal+" kcal \u00b7 "+f.prot+"g eiwit")),
+                  e("div",{className:"arow",onClick:function(ev){ev.stopPropagation()}},
+                    e("button",{className:"arb",onClick:function(){setAq(function(p){const n=Object.assign({},p);n[f.id]=Math.max(1,curQ-1);return n})}},"-"),
+                    e("span",{className:"arv"},curQ),
+                    e("button",{className:"arb",onClick:function(){setAq(function(p){const n=Object.assign({},p);n[f.id]=curQ+1;return n})}},"+"),
+                    e("button",{className:"ara",onClick:function(){addM(f,curQ)}},"+")
+                  )
                 )
               }),
               filt.items.length===0&&srch?e("div",{className:"ef"},"Niet gevonden"):null
