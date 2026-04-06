@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111827">
+<title>Shredded Summer</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU2hyZWRkZWQgU3VtbWVyIiwic2hvcnRfbmFtZSI6IlNocmVkZGVkIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzExMTgyNyIsInRoZW1lX2NvbG9yIjoiIzExMTgyNyIsInN0YXJ0X3VybCI6Ii4ifQ==">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden}
+body{background:#111827;font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+#root{height:100%}
+
+.ss{--acc:#10B981;--acc2:rgba(16,185,129,.12);--acc3:#059669;--blue:#6366F1;--amber:#F59E0B;--red:#EF4444;--text:#F9FAFB;--t2:#9CA3AF;--t3:#6B7280;--card:#1F2937;--bg:#111827;--bg2:#0F172A;--brd:#374151;max-width:430px;margin:0 auto;font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg);color:var(--text);position:relative}
+.hdr{padding:20px 20px 6px}
+.h1{font-size:24px;font-weight:700;letter-spacing:-.5px}
+.h1 span{color:var(--acc)}
+.sub{font-size:13px;color:var(--t2);margin-top:3px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.ai{animation:fadeUp .35s cubic-bezier(.4,0,.2,1) both}
+.wnav{display:flex;align-items:center;justify-content:space-between;padding:4px 16px 0}
+.wnav button{background:none;border:none;font-size:18px;color:var(--t2);cursor:pointer;padding:8px 14px;border-radius:10px;transition:background .15s}
+.wnav button:active{background:var(--brd)}
+.wnav span{font-size:12px;color:var(--t3)}
+.strip{display:flex;gap:5px;padding:10px 16px 16px}
+.dy{flex:1;text-align:center;padding:10px 0 8px;border-radius:14px;cursor:pointer;transition:all .2s;min-width:0}
+.dy.sel{box-shadow:0 0 0 2.5px var(--acc)}
+.dy.empty{background:var(--card)}.dy.fitness{background:#064E3B}.dy.tennis{background:#1E3A5F}.dy.padel{background:#78350F}.dy.rust{background:#374151}
+.dyl{font-size:10px;letter-spacing:.4px;font-weight:500}
+.dy.empty .dyl{color:var(--t3)}.dy.fitness .dyl{color:#6EE7B7}.dy.tennis .dyl{color:#93C5FD}.dy.padel .dyl{color:#FCD34D}.dy.rust .dyl{color:var(--t3)}
+.dyn{font-size:16px;font-weight:700;margin:3px 0 1px}
+.dy.empty .dyn{color:var(--t2)}.dy.fitness .dyn{color:#ECFDF5}.dy.tennis .dyn{color:#EFF6FF}.dy.padel .dyn{color:#FFFBEB}.dy.rust .dyn{color:var(--t2)}
+.dys{font-size:10px;font-weight:600}
+.dy.empty .dys{color:var(--t3)}.dy.fitness .dys{color:#34D399}.dy.tennis .dys{color:#60A5FA}.dy.padel .dys{color:#FBBF24}.dy.rust .dys{color:var(--t3)}
+.crd{background:var(--card);border-radius:20px;padding:18px;margin:0 16px 12px}
+.crd2{background:var(--bg2);border-radius:20px;padding:18px;margin:0 16px 12px}
+.ct{font-size:13px;font-weight:600;color:var(--t2);margin:0 0 12px;letter-spacing:.3px}
+.chdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.pill{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:600;display:inline-block}
+.pill-g{background:rgba(16,185,129,.15);color:#34D399}.pill-b{background:rgba(96,165,250,.15);color:#60A5FA}.pill-a{background:rgba(251,191,36,.15);color:#FBBF24}
+.sbtn{display:flex;gap:6px}
+.sb{flex:1;padding:11px 4px;border-radius:12px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;border:1px solid var(--brd);background:var(--bg);color:var(--t2);font-family:inherit;transition:all .15s}
+.sb:active{transform:scale(.96)}
+.sb.ac{background:var(--acc);color:#fff;border-color:var(--acc)}
+.srow{display:flex;flex-direction:column;gap:12px}
+.sgrp{width:100%}
+.slbl{font-size:12px;color:var(--t3);margin-bottom:6px;font-weight:500}
+.sdur{display:flex;gap:8px}
+.sbox{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 12px;border-radius:12px;border:1px solid var(--brd);background:var(--card)}
+.sbox input{width:40px;border:none;background:transparent;font-size:20px;font-weight:700;color:var(--text);text-align:center;outline:none;font-family:inherit}
+.sbox span{font-size:13px;color:var(--t3)}
+.lbtn{width:100%;padding:12px;border-radius:14px;background:var(--acc);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center}
+.lbtn:active{transform:scale(.97)}
+.lbtn.done{background:#064E3B;color:#34D399}
+.rlbl{font-size:12px;color:var(--t3);margin-bottom:8px;font-weight:500}
+.rrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.rrow+.rrow{border-top:1px solid var(--brd)}
+.rrl{display:flex;align-items:center;gap:8px}
+.rrd{font-size:13px;font-weight:500}
+.rrt{font-size:13px;color:var(--t3)}
+.macg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.macl{font-size:11px;color:var(--t3);text-align:center;font-weight:500}
+.macv{font-size:20px;font-weight:700;text-align:center;margin:4px 0 2px;letter-spacing:-.5px}
+.macv.ok{color:var(--text)}.macv.prot{color:var(--acc)}.macv.over{color:var(--red)}
+.macs{font-size:11px;text-align:center;font-weight:500}
+.macs.ok{color:var(--t3)}.macs.over{color:var(--red)}
+.bar{height:5px;background:var(--brd);border-radius:3px;overflow:hidden;margin-top:5px}
+.barf{height:100%;border-radius:3px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.barf.gr{background:var(--acc)}.barf.bl{background:var(--blue)}.barf.am{background:var(--amber)}.barf.rd{background:var(--red)}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.mrow+.mrow{border-top:1px solid var(--brd)}
+.mrl{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.mdel{width:24px;height:24px;border-radius:8px;background:rgba(239,68,68,.15);color:#EF4444;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0;border:none;font-family:inherit;transition:all .15s}
+.mdel:active{background:#EF4444;color:#fff}
+.mname{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mpor{font-size:12px;color:var(--t3);margin-top:1px}
+.mri{text-align:right;flex-shrink:0;margin-left:8px}
+.mkc{font-size:12px;color:var(--t2)}
+.mpr{font-size:11px;color:var(--acc);margin-top:1px;font-weight:500}
+.memp{font-size:13px;color:var(--t3);text-align:center;padding:24px 0}
+.abtn{margin:0 16px 12px;padding:13px;border-radius:14px;background:var(--card);color:var(--text);font-size:14px;font-weight:600;border:1px solid var(--brd);cursor:pointer;width:calc(100% - 32px);font-family:inherit;transition:all .15s}
+.abtn:active{background:var(--brd);transform:scale(.98)}
+.warn{margin:0 16px 12px;padding:14px 16px;border-radius:14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25)}
+.warnt{font-size:13px;color:#FCA5A5;font-weight:600}
+.warnx{font-size:12px;color:#F87171;margin-top:4px}
+.gtags{display:flex;flex-wrap:wrap;gap:6px}
+.gtag{font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;font-weight:500;transition:all .15s}
+.gtag.on{background:var(--acc2);color:#34D399}
+.gtag.off{background:var(--brd);color:var(--t3);text-decoration:line-through}
+.strow{display:flex;justify-content:space-between;align-items:center;padding:10px 0}
+.strow+.strow{border-top:1px solid var(--brd)}
+.stl{font-size:13px;color:var(--t2)}
+.stv{font-size:15px;font-weight:700}
+.metg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 12px}
+.met{background:var(--card);border-radius:16px;padding:14px;text-align:center}
+.metl{font-size:11px;color:var(--t3);font-weight:500}
+.metv{font-size:24px;font-weight:700;margin:4px 0;letter-spacing:-.5px}
+.wch{height:130px;display:flex;align-items:flex-end;gap:8px;padding-top:12px}
+.wcw{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.wcv{font-size:11px;color:var(--t3);font-weight:500}
+.wcb{width:100%;background:var(--acc);border-radius:6px 6px 0 0;transition:height .4s cubic-bezier(.4,0,.2,1)}
+.wcl{font-size:11px;color:var(--t3)}
+.pbtn{margin:0 16px 12px;padding:14px;border-radius:14px;background:var(--acc);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;width:calc(100% - 32px);font-family:inherit;transition:all .15s}
+.pbtn:active{transform:scale(.98);opacity:.9}
+.sbtn2{margin:0 16px 12px;padding:13px;border-radius:14px;background:var(--card);color:var(--text);font-size:13px;font-weight:600;border:1px solid var(--brd);cursor:pointer;width:calc(100% - 32px);font-family:inherit}
+.sbtn2:active{background:var(--brd)}
+.nav{padding:10px 16px 28px;border-top:1px solid var(--brd);display:flex;justify-content:space-around;margin-top:auto;background:var(--bg);position:sticky;bottom:0}
+.ni{text-align:center;cursor:pointer;padding:6px 20px;transition:all .15s}
+.ndot{width:5px;height:5px;border-radius:50%;margin:0 auto 6px;transition:all .2s}
+.ndot.on{background:var(--acc);width:20px;border-radius:3px}
+.ndot.off{background:var(--t3)}
+.nlbl{font-size:11px;font-weight:500;transition:color .15s}
+.nlbl.on{color:var(--acc)}
+.nlbl.off{color:var(--t3)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:100;animation:fi .15s;backdrop-filter:blur(4px)}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.mo{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:85dvh;overflow:auto;padding:24px 20px 36px;animation:su .25s cubic-bezier(.4,0,.2,1)}
+@keyframes su{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.moh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.mot{font-size:18px;font-weight:700}
+.moc{cursor:pointer;font-size:20px;color:var(--t3);background:var(--bg);border:none;padding:6px 10px;border-radius:10px;transition:background .15s}
+.moc:active{background:var(--brd)}
+.inp{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--brd);background:var(--bg);font-size:14px;color:var(--text);outline:none;font-family:inherit;box-sizing:border-box}
+.inp:focus{border-color:var(--acc)}
+.frow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--brd);cursor:pointer;transition:background .1s}
+.frow:active{background:rgba(255,255,255,.03)}
+.fn{font-size:14px;font-weight:600}
+.fi2{font-size:12px;color:var(--t3)}
+.fp{width:32px;height:32px;border-radius:10px;background:var(--acc2);display:flex;align-items:center;justify-content:center;color:var(--acc);font-size:18px;flex-shrink:0}
+.arow{display:flex;align-items:center;gap:8px}
+.arb{width:32px;height:32px;border-radius:10px;border:1px solid var(--brd);background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-family:inherit;color:var(--text);transition:all .15s}
+.arb:active{background:var(--brd)}
+.arv{font-size:16px;font-weight:700;min-width:22px;text-align:center}
+.ara{padding:6px 16px;border-radius:10px;background:var(--acc);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.mng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mnl{font-size:11px;color:var(--t3);margin-bottom:4px;font-weight:500}
+.mpbtn{width:100%;padding:14px;border-radius:14px;background:var(--acc);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:inherit;margin-top:20px}
+.msbtn{width:100%;padding:12px;border-radius:14px;background:var(--bg);color:var(--text);font-size:13px;font-weight:600;border:1px solid var(--brd);cursor:pointer;font-family:inherit;margin-top:8px}
+.ef{text-align:center;padding:24px;color:var(--t3);font-size:13px}
+.cnt{flex:1;overflow-y:auto;padding-bottom:8px}
+.cathdr{font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;padding:12px 0 6px;border-bottom:1px solid var(--brd)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<script>
+const e=React.createElement,{useState,useCallback,useMemo}=React;
+
+const FOOD_DB=[
+{id:"boterham",name:"Boterham meergranen",por:"per sneetje",kcal:85,prot:4,kh:14,vet:1,cat:"ontbijt",adj:true,dq:4},
+{id:"kaas",name:"Schel jong belegen kaas",por:"per sneetje",kcal:75,prot:5,kh:0,vet:6,cat:"ontbijt",adj:true,dq:2},
+{id:"prepare",name:"Préparé",por:"per sneetje",kcal:60,prot:2,kh:1,vet:5,cat:"ontbijt",adj:true,dq:2},
+{id:"yoghurt",name:"Griekse yoghurt aardbei",por:"200g bakje",kcal:150,prot:8,kh:20,vet:4,cat:"ontbijt"},
+{id:"havermout",name:"Havermout + melk",por:"80g + 200ml",kcal:380,prot:14,kh:52,vet:10,cat:"ontbijt"},
+{id:"banaan",name:"Banaan",por:"1 stuk",kcal:105,prot:1,kh:27,vet:0,cat:"ontbijt"},
+{id:"whey",name:"Whey shake",por:"1 scoop + water",kcal:120,prot:24,kh:3,vet:1,cat:"ontbijt"},
+{id:"ei",name:"Ei (gekookt/gebakken)",por:"1 stuk",kcal:90,prot:7,kh:1,vet:6,cat:"ontbijt",adj:true,dq:2},
+{id:"stokbrood",name:"Stuk stokbrood",por:"½ stokbrood",kcal:280,prot:9,kh:52,vet:3,cat:"lunch"},
+{id:"minisandwich",name:"Mini sandwich",por:"½ sandwich",kcal:190,prot:8,kh:22,vet:7,cat:"lunch"},
+{id:"spaghetti",name:"Spaghetti bolognese",por:"groot bord",kcal:680,prot:35,kh:75,vet:22,cat:"avondeten"},
+{id:"soep",name:"Soep (groenten)",por:"kom 300ml",kcal:120,prot:4,kh:15,vet:5,cat:"lunch"},
+{id:"kipfilet_za",name:"Kipfilet zoete aardappel gerecht",por:"volledig",kcal:620,prot:45,kh:42,vet:18,cat:"avondeten"},
+{id:"pasta_ingrid",name:"Pasta tante Ingrid",por:"grote portie",kcal:750,prot:28,kh:80,vet:30,cat:"avondeten"},
+{id:"pasta_brenda",name:"Pasta Brenda",por:"grote portie",kcal:820,prot:32,kh:72,vet:38,cat:"avondeten"},
+{id:"pitta",name:"Pitta lam look + groenten",por:"volledig",kcal:720,prot:38,kh:65,vet:30,cat:"lunch"},
+{id:"durum2",name:"Durum lam look + groenten",por:"volledig",kcal:780,prot:40,kh:70,vet:32,cat:"lunch"},
+{id:"frituur",name:"Frituurbestelling compleet",por:"alles samen",kcal:1650,prot:52,kh:140,vet:90,cat:"avondeten"},
+{id:"kipwrap",name:"Kip wrap + groenten",por:"volledig",kcal:540,prot:38,kh:42,vet:18,cat:"lunch"},
+{id:"zalm",name:"Zalm + groenten",por:"filet 150g",kcal:350,prot:34,kh:2,vet:22,cat:"avondeten"},
+{id:"rijst",name:"Rijst (gekookt)",por:"200g",kcal:260,prot:5,kh:56,vet:1,cat:"avondeten"},
+{id:"tonijn",name:"Tonijnsalade broodje",por:"volledig",kcal:480,prot:32,kh:38,vet:18,cat:"lunch"},
+{id:"cottage",name:"Cottage cheese",por:"200g",kcal:160,prot:22,kh:6,vet:4,cat:"lunch"},
+{id:"skyr",name:"Skyr natuur",por:"150g",kcal:100,prot:16,kh:6,vet:0,cat:"snack"},
+{id:"proteinereep",name:"Proteinereep",por:"1 stuk",kcal:220,prot:20,kh:22,vet:7,cat:"snack"},
+{id:"chips",name:"Potje chips",por:"45g",kcal:240,prot:3,kh:24,vet:15,cat:"snack"},
+{id:"cola",name:"Blik Coca Cola",por:"33cl",kcal:140,prot:0,kh:35,vet:0,cat:"drank"},
+{id:"sprite",name:"Blik Sprite",por:"33cl",kcal:130,prot:0,kh:33,vet:0,cat:"drank"},
+{id:"fanta",name:"Blik Fanta",por:"33cl",kcal:135,prot:0,kh:34,vet:0,cat:"drank"},
+{id:"fusetea",name:"Blik Fuze Tea Green",por:"33cl",kcal:70,prot:0,kh:17,vet:0,cat:"drank"},
+{id:"redbull",name:"Red Bull",por:"25cl",kcal:115,prot:0,kh:28,vet:0,cat:"drank"},
+{id:"nalu",name:"Nalu",por:"25cl",kcal:100,prot:0,kh:24,vet:0,cat:"drank"},
+{id:"stella",name:"Stella flesje",por:"25cl",kcal:110,prot:1,kh:8,vet:0,cat:"drank"},
+{id:"rodewijn",name:"Glas rode wijn",por:"150ml",kcal:125,prot:0,kh:3,vet:0,cat:"drank"},
+{id:"wittewijn",name:"Glas witte wijn",por:"150ml",kcal:120,prot:0,kh:3,vet:0,cat:"drank"},
+{id:"champagne",name:"Glas champagne",por:"125ml",kcal:95,prot:0,kh:2,vet:0,cat:"drank"},
+{id:"duvel_bier",name:"Duvel",por:"33cl",kcal:220,prot:1,kh:12,vet:0,cat:"drank"}
+];
+
+const G={kcal:2150,prot:148,kh:230,vet:65};
+const DL=["MA","DI","WO","DO","VR","ZA","ZO"];
+const FD=["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"];
+const MN=["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+const catLabels={ontbijt:"Ontbijt",lunch:"Lunch",avondeten:"Avondeten",snack:"Snack",drank:"Dranken"};
+
+function weekNr(d){const t=new Date(d);t.setHours(0,0,0,0);t.setDate(t.getDate()+3-((t.getDay()+6)%7));const w=new Date(t.getFullYear(),0,4);return 1+Math.round(((t-w)/864e5-3+((w.getDay()+6)%7))/7)}
+function getMon(d){const t=new Date(d);const y=t.getDay();t.setDate(t.getDate()-y+(y===0?-6:1));t.setHours(0,0,0,0);return t}
+function fmt(d){return d.getDate()+" "+MN[d.getMonth()]}
+function wKey(m){return m.getFullYear()+"-"+String(m.getMonth()+1).padStart(2,"0")+"-"+String(m.getDate()).padStart(2,"0")}
+function calcSp(sp){const f=[];sp.forEach(function(s,i){if(s==="fitness")f.push(i)});const n=f.length,r={};if(n>=1)r[f[0]]="push";if(n>=2)r[f[1]]="pull";if(n>=3)r[f[2]]="legs";for(let i=3;i<n;i++)r[f[i]]="full body";return r}
+const SK="ss2";
+function ld(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):{}}catch(x){return{}}}
+function sv(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(x){}}
+function xcsv(s){const h="Datum,Sport,Split,Duur (min)\n";const r=s.map(function(x){return x.date+","+x.sport+","+(x.split||"")+","+x.dur}).join("\n");const b=new Blob([h+r],{type:"text/csv"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="sessies.csv";a.click();URL.revokeObjectURL(u)}
+
+function App(){
+  const[tab,setTab]=useState("planning");
+  const[data,setData]=useState(ld);
+  const[mon,setMon]=useState(function(){return getMon(new Date())});
+  const[sel,setSel]=useState(function(){const d=new Date().getDay();return d===0?6:d-1});
+  const[showAdd,setShowAdd]=useState(false);
+  const[showMan,setShowMan]=useState(false);
+  const[srch,setSrch]=useState("");
+  const[man,setMan]=useState({name:"",kcal:"",prot:"",kh:"",vet:""});
+  const[aq,setAq]=useState({});
+  const[showW,setShowW]=useState(false);
+  const[wIn,setWIn]=useState("");
+  const[sH,setSH]=useState(1);
+  const[sM2,setSM2]=useState(0);
+
+  const k=useMemo(function(){return wKey(mon)},[mon]);
+  const empty={sports:Array(7).fill(null),meals:[{},{},{},{},{},{},{}],sessions:[],gc:{}};
+  const wd=useMemo(function(){return data[k]||empty},[data,k]);
+  const sp=useMemo(function(){return calcSp(wd.sports)},[wd.sports]);
+  const ds=useMemo(function(){return DL.map(function(_,i){const d=new Date(mon);d.setDate(d.getDate()+i);return d})},[mon]);
+
+  const upd=useCallback(function(fn){
+    setData(function(p){const c=JSON.parse(JSON.stringify(p[k]||empty));const n=fn(c);const d=Object.assign({},p);d[k]=n;sv(d);return d});
+  },[k]);
+
+  const dm=wd.meals[sel]||{};
+  const mi=Object.entries(dm);
+  const tot=useMemo(function(){return mi.reduce(function(a,x){const i=x[1];const q=i.qty||1;return{kcal:a.kcal+i.kcal*q,prot:a.prot+i.prot*q,kh:a.kh+i.kh*q,vet:a.vet+i.vet*q}},{kcal:0,prot:0,kh:0,vet:0})},[mi]);
+
+  const allS=useMemo(function(){const s=[];Object.values(data).forEach(function(w){if(w.sessions)s.push.apply(s,w.sessions)});return s.sort(function(a,b){return b.date.localeCompare(a.date)})},[data]);
+  const rec=allS.slice(0,7);
+  const allW=useMemo(function(){const w=[];Object.entries(data).forEach(function(x){if(x[1].weight)w.push({week:x[0],weight:x[1].weight})});return w.sort(function(a,b){return a.week.localeCompare(b.week)})},[data]);
+  const wSt=useMemo(function(){const ss=wd.sessions||[];const tt=ss.reduce(function(a,s){return a+(s.dur||0)},0);let tp=0,tk=0,dc=0;wd.meals.forEach(function(m){const it=Object.values(m||{});if(it.length){dc++;it.forEach(function(i){tp+=(i.prot||0)*(i.qty||1);tk+=(i.kcal||0)*(i.qty||1)})}});return{sc:ss.length,tt:tt,ap:dc?Math.round(tp/dc):0,ak:dc?Math.round(tk/dc):0}},[wd]);
+  const streak=useMemo(function(){let c=0;const t=new Date();t.setHours(0,0,0,0);for(let i=0;i<365;i++){const d=new Date(t);d.setDate(d.getDate()-i);const m=getMon(d);const key=wKey(m);const w=data[key];if(!w)break;const di=d.getDay()===0?6:d.getDay()-1;if(w.sports[di]||Object.values(w.meals[di]||{}).length)c++;else break}return c},[data]);
+
+  const ov=function(k){return tot[k]>G[k]};
+  const anyOv=["kcal","prot","kh","vet"].some(ov);
+  const setSport=function(i,s){upd(function(w){w.sports[i]=s;return w});if(s==="fitness"||s==="tennis"){setSH(1);setSM2(0)}else if(s==="padel"){setSH(1);setSM2(30)}};
+  const addM=function(f,q){q=q||1;const id=f.id+"_"+Date.now();upd(function(w){if(!w.meals[sel])w.meals[sel]={};w.meals[sel][id]=Object.assign({},f,{qty:q});return w});setShowAdd(false);setSrch("");setAq({})};
+  const delM=function(id){upd(function(w){delete w.meals[sel][id];return w})};
+  const logS=function(){const dur=sH*60+sM2;const sport=wd.sports[sel];const spl=sp[sel]||null;const dt=ds[sel].toISOString().split("T")[0];upd(function(w){if(!w.sessions)w.sessions=[];const ex=w.sessions.findIndex(function(s){return s.date===dt});const en={date:dt,sport:sport||"fitness",split:spl,dur:dur};if(ex>=0)w.sessions[ex]=en;else w.sessions.push(en);return w})};
+  const logW=function(){const w=parseFloat(wIn);if(isNaN(w))return;upd(function(d){d.weight=w;return d});setShowW(false);setWIn("")};
+  const togG=function(it){upd(function(w){if(!w.gc)w.gc={};w.gc[it]=!w.gc[it];return w})};
+  const groc=useMemo(function(){const s=new Set();wd.meals.forEach(function(m){Object.values(m||{}).forEach(function(i){if(i.name)s.add(i.name)})});return Array.from(s)},[wd.meals]);
+
+  const scls=function(s){return s||"empty"};
+  const slbl=function(i){const s=wd.sports[i];if(!s)return"\u2014";if(s==="tennis")return"Tennis";if(s==="padel")return"Padel";if(s==="rust")return"Rust";if(s==="fitness"&&sp[i]){const x=sp[i];return x.charAt(0).toUpperCase()+x.slice(1)}return s};
+  const slog=wd.sessions&&wd.sessions.some(function(s){return s.date===(ds[sel]&&ds[sel].toISOString().split("T")[0])});
+  const filt=useMemo(function(){
+    const h=new Date().getHours();
+    let co;
+    if(h<11)co=["ontbijt","lunch","avondeten","snack","drank"];
+    else if(h<15)co=["lunch","avondeten","ontbijt","snack","drank"];
+    else if(h<21)co=["avondeten","lunch","snack","ontbijt","drank"];
+    else co=["snack","drank","avondeten","lunch","ontbijt"];
+    const matched=FOOD_DB.filter(function(f){return f.name.toLowerCase().indexOf(srch.toLowerCase())>=0});
+    return{items:matched.sort(function(a,b){const ai=co.indexOf(a.cat);const bi=co.indexOf(b.cat);if(ai!==bi)return ai-bi;return a.name.localeCompare(b.name)}),order:co};
+  },[srch]);
+
+  const filtGrouped=useMemo(function(){const groups=[];let lastCat=null;filt.items.forEach(function(f){if(f.cat!==lastCat){groups.push({type:"header",cat:f.cat});lastCat=f.cat}groups.push({type:"item",food:f})});return groups},[filt]);
+
+  // PLANNING TAB
+  function planTab(){
+    return[
+      e("div",{className:"wnav",key:"wn"},
+        e("button",{onClick:function(){const d=new Date(mon);d.setDate(d.getDate()-7);setMon(d)}},"\u2190"),
+        e("span",null,fmt(ds[0])+" \u2014 "+fmt(ds[6])),
+        e("button",{onClick:function(){const d=new Date(mon);d.setDate(d.getDate()+7);setMon(d)}},"\u2192")
+      ),
+      e("div",{className:"strip",key:"st"},DL.map(function(d,i){
+        return e("div",{key:i,className:"dy "+scls(wd.sports[i])+(sel===i?" sel":""),onClick:function(){setSel(i);const s=wd.sports[i];if(s==="padel"){setSH(1);setSM2(30)}else if(s==="fitness"||s==="tennis"){setSH(1);setSM2(0)}}},
+          e("div",{className:"dyl"},d),
+          e("div",{className:"dyn"},ds[i].getDate()),
+          e("div",{className:"dys"},slbl(i))
+        )
+      })),
+      e("div",{className:"crd ai",key:"sp"},
+        e("div",{className:"chdr"},
+          e("span",{className:"ct",style:{margin:0}},FD[sel]+" "+ds[sel].getDate()+" "+MN[ds[sel].getMonth()]),
+          wd.sports[sel]==="fitness"&&sp[sel]?e("span",{className:"pill pill-g"},sp[sel].charAt(0).toUpperCase()+sp[sel].slice(1)):null,
+          wd.sports[sel]==="tennis"?e("span",{className:"pill pill-b"},"Tennis"):null,
+          wd.sports[sel]==="padel"?e("span",{className:"pill pill-a"},"Padel"):null
+        ),
+        e("div",{className:"sbtn"},["fitness","tennis","padel","rust"].map(function(s){
+          return e("div",{key:s,className:"sb"+(wd.sports[sel]===s?" ac":""),onClick:function(){setSport(sel,s)}},s.charAt(0).toUpperCase()+s.slice(1))
+        }))
+      ),
+      wd.sports[sel]&&wd.sports[sel]!=="rust"?e("div",{className:"crd ai",key:"sess",style:{animationDelay:"50ms"}},
+        e("div",{className:"ct"},"Sessie loggen"),
+        e("div",{className:"srow"},
+          e("div",{className:"sgrp"},
+            e("div",{className:"slbl"},"Duur"),
+            e("div",{className:"sdur"},
+              e("div",{className:"sbox"},e("input",{type:"number",min:0,max:5,value:sH,onChange:function(ev){setSH(Math.max(0,parseInt(ev.target.value)||0))}}),e("span",null,"uur")),
+              e("div",{className:"sbox"},e("input",{type:"number",min:0,max:59,step:5,value:sM2,onChange:function(ev){setSM2(Math.max(0,Math.min(59,parseInt(ev.target.value)||0)))}}),e("span",null,"min"))
+            )
+          ),
+          e("button",{className:"lbtn"+(slog?" done":""),onClick:logS},slog?"Gelogd \u2713":"Log sessie")
+        )
+      ):null,
+      rec.length>0?e("div",{className:"crd2 ai",key:"rec",style:{animationDelay:"100ms"}},
+        e("div",{className:"rlbl"},"Recente sessies"),
+        rec.map(function(s,i){
+          const d=new Date(s.date+"T12:00:00");
+          const l=["Zo","Ma","Di","Wo","Do","Vr","Za"][d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()];
+          const du=Math.floor(s.dur/60)+"u"+String(s.dur%60).padStart(2,"0");
+          const pc=s.sport==="tennis"?"pill-b":s.sport==="padel"?"pill-a":"pill-g";
+          const pt=s.split?s.split.charAt(0).toUpperCase()+s.split.slice(1):s.sport.charAt(0).toUpperCase()+s.sport.slice(1);
+          return e("div",{key:i,className:"rrow"},e("div",{className:"rrl"},e("span",{className:"pill "+pc},pt),e("span",{className:"rrd"},l)),e("span",{className:"rrt"},du))
+        })
+      ):null
+    ];
+  }
+
+  // VOEDING TAB
+  function voedTab(){
+    return[
+      e("div",{className:"crd ai",key:"mac"},
+        e("div",{className:"ct"},"Macro's"),
+        e("div",{className:"macg"},[{k:"kcal",l:"Kcal",u:""},{k:"prot",l:"Eiwit",u:"g"},{k:"kh",l:"Carbs",u:"g"},{k:"vet",l:"Vet",u:"g"}].map(function(x){
+          return e("div",{key:x.k},
+            e("div",{className:"macl"},x.l),
+            e("div",{className:"macv "+(ov(x.k)?"over":x.k==="prot"?"prot":"ok")},Math.round(tot[x.k])+x.u),
+            e("div",{className:"macs "+(ov(x.k)?"over":"ok")},ov(x.k)?"+"+Math.round(tot[x.k]-G[x.k]):"/ "+G[x.k]+x.u),
+            e("div",{className:"bar"},e("div",{className:"barf "+(ov(x.k)?"rd":x.k==="prot"?"gr":x.k==="kh"?"bl":"am"),style:{width:Math.min(100,Math.round(tot[x.k]/G[x.k]*100))+"%"}}))
+          )
+        }))
+      ),
+      e("div",{className:"crd ai",key:"meals",style:{animationDelay:"50ms"}},
+        e("div",{className:"ct"},"Maaltijden"),
+        mi.length===0?e("div",{className:"memp"},"Nog niets ingevoerd vandaag"):null,
+        mi.map(function(x){const id=x[0],it=x[1];return e("div",{key:id,className:"mrow"},
+          e("div",{className:"mrl"},
+            e("button",{className:"mdel",onClick:function(){delM(id)}},"\u00d7"),
+            e("div",{style:{minWidth:0}},
+              e("div",{className:"mname"},it.name+(it.qty>1?" (\u00d7"+it.qty+")":"")),
+              e("div",{className:"mpor"},it.por||it.portion)
+            )
+          ),
+          e("div",{className:"mri"},
+            e("div",{className:"mkc"},Math.round(it.kcal*(it.qty||1))+" kcal"),
+            e("div",{className:"mpr"},Math.round(it.prot*(it.qty||1))+"g prot")
+          )
+        )})
+      ),
+      e("button",{key:"add",className:"abtn",onClick:function(){setShowAdd(true)}},"+  Voeg item toe"),
+      anyOv?e("div",{key:"warn",className:"warn"},
+        e("div",{className:"warnt"},"Over je limiet"),
+        e("div",{className:"warnx"},(ov("kcal")?"+"+Math.round(tot.kcal-G.kcal)+" kcal ":"")+(ov("vet")?"+"+Math.round(tot.vet-G.vet)+"g vet ":"")+(ov("kh")?"+"+Math.round(tot.kh-G.kh)+"g koolh ":"")+"boven je dagdoel.")
+      ):null,
+      groc.length>0?e("div",{key:"groc",className:"crd ai",style:{animationDelay:"100ms"}},
+        e("div",{className:"ct"},"Boodschappenlijst"),
+        e("div",{className:"gtags"},groc.map(function(it,i){return e("button",{key:i,className:"gtag "+(wd.gc&&wd.gc[it]?"off":"on"),onClick:function(){togG(it)}},it)}))
+      ):null,
+      showAdd?e("div",{key:"modal",className:"ov",onClick:function(){setShowAdd(false);setSrch("");setShowMan(false);setAq({})}},
+        e("div",{className:"mo",onClick:function(ev){ev.stopPropagation()}},
+          e("div",{className:"moh"},e("span",{className:"mot"},"Voeg item toe"),e("button",{className:"moc",onClick:function(){setShowAdd(false);setSrch("");setShowMan(false);setAq({})}},"\u00d7")),
+          !showMan?[
+            e("input",{key:"srch",className:"inp",placeholder:"Zoek item...",value:srch,onChange:function(ev){setSrch(ev.target.value)},autoFocus:true}),
+            e("div",{key:"list",style:{marginTop:12,maxHeight:300,overflowY:"auto"}},
+              filtGrouped.map(function(g,i){
+                if(g.type==="header")return e("div",{key:"h_"+g.cat,className:"cathdr"},catLabels[g.cat]||g.cat);
+                const f=g.food;
+                return e("div",{key:f.id,className:"frow",onClick:function(){if(f.adj){setAq(function(p){const n=Object.assign({},p);n[f.id]=p[f.id]!==undefined?undefined:f.dq;return n})}else addM(f)}},
+                  e("div",null,e("div",{className:"fn"},f.name),e("div",{className:"fi2"},f.por+" \u2014 "+f.kcal+" kcal \u00b7 "+f.prot+"g eiwit")),
+                  f.adj&&aq[f.id]!==undefined?e("div",{className:"arow",onClick:function(ev){ev.stopPropagation()}},
+                    e("button",{className:"arb",onClick:function(){setAq(function(p){const n=Object.assign({},p);n[f.id]=Math.max(1,(p[f.id]||f.dq)-1);return n})}},"-"),
+                    e("span",{className:"arv"},aq[f.id]),
+                    e("button",{className:"arb",onClick:function(){setAq(function(p){const n=Object.assign({},p);n[f.id]=(p[f.id]||f.dq)+1;return n})}},"+"),
+                    e("button",{className:"ara",onClick:function(){addM(f,aq[f.id])}},"+")
+                  ):e("div",{className:"fp"},"+")
+                )
+              }),
+              filt.items.length===0&&srch?e("div",{className:"ef"},"Niet gevonden"):null
+            ),
+            e("button",{key:"man",className:"msbtn",onClick:function(){setShowMan(true)}},"Manueel toevoegen")
+          ]:[
+            e("input",{key:"mname",className:"inp",placeholder:"Naam (bv. Broodje gezond)",value:man.name,onChange:function(ev){setMan(function(p){return Object.assign({},p,{name:ev.target.value})})},autoFocus:true}),
+            e("div",{key:"mgrid",className:"mng"},[{k:"kcal",l:"Kcal"},{k:"prot",l:"Eiwit (g)"},{k:"kh",l:"Carbs (g)"},{k:"vet",l:"Vet (g)"}].map(function(x){
+              return e("div",{key:x.k},e("div",{className:"mnl"},x.l),e("input",{className:"inp",type:"number",placeholder:"0",value:man[x.k],onChange:function(ev){setMan(function(p){const n=Object.assign({},p);n[x.k]=ev.target.value;return n})}}))
+            })),
+            e("button",{key:"madd",className:"mpbtn",onClick:function(){if(!man.name)return;addM({id:"m_"+Date.now(),name:man.name,por:"manueel",kcal:parseFloat(man.kcal)||0,prot:parseFloat(man.prot)||0,kh:parseFloat(man.kh)||0,vet:parseFloat(man.vet)||0});setMan({name:"",kcal:"",prot:"",kh:"",vet:""});setShowMan(false)}},"Toevoegen"),
+            e("button",{key:"mback",className:"msbtn",onClick:function(){setShowMan(false)}},"Terug naar lijst")
+          ]
+        )
+      ):null
+    ];
+  }
+
+  // PROGRESSIE TAB
+  function progTab(){
+    return[
+      e("div",{key:"met",className:"metg"},
+        e("div",{className:"met ai"},e("div",{className:"metl"},"Huidig gewicht"),e("div",{className:"metv",style:{color:"var(--text)"}},allW.length?allW[allW.length-1].weight+" kg":"\u2014 kg")),
+        e("div",{className:"met ai",style:{animationDelay:"50ms"}},e("div",{className:"metl"},"Startgewicht"),e("div",{className:"metv",style:{color:"var(--t2)"}},"74.0 kg"))
+      ),
+      allW.length>0?e("div",{key:"wch",className:"crd ai",style:{animationDelay:"100ms"}},
+        e("div",{className:"ct"},"Gewichtsverloop"),
+        e("div",{className:"wch"},function(){
+          const w=allW.slice(-8);const mx=Math.max.apply(null,w.map(function(x){return x.weight}));const mn=Math.min.apply(null,w.map(function(x){return x.weight}))-2;const rng=mx-mn||1;
+          return w.map(function(x,i){return e("div",{key:i,className:"wcw"},e("span",{className:"wcv"},x.weight),e("div",{className:"wcb",style:{height:Math.max(20,((x.weight-mn)/rng)*100)+"px"}}),e("span",{className:"wcl"},"W"+(i+1)))})
+        }())
+      ):null,
+      e("div",{key:"stats",className:"crd ai",style:{animationDelay:"150ms"}},
+        e("div",{className:"ct"},"Deze week"),
+        [{l:"Trainingen voltooid",v:wSt.sc+" / "+wd.sports.filter(function(s){return s&&s!=="rust"}).length,c:"var(--acc)"},{l:"Totale sporttijd",v:wSt.tt>0?Math.floor(wSt.tt/60)+"u "+wSt.tt%60+"min":"0u",c:"var(--text)"},{l:"Gem. eiwit / dag",v:wSt.ap>0?wSt.ap+"g":"\u2014",c:"var(--acc)"},{l:"Gem. kcal / dag",v:wSt.ak>0?""+wSt.ak:"\u2014",c:"var(--text)"},{l:"Streak",v:streak+" dagen",c:"#FBBF24"}].map(function(r,i){
+          return e("div",{key:i,className:"strow"},e("span",{className:"stl"},r.l),e("span",{className:"stv",style:{color:r.c}},r.v))
+        })
+      ),
+      e("button",{key:"wlog",className:"pbtn",onClick:function(){setShowW(true)}},"Gewicht loggen"),
+      e("button",{key:"csv",className:"sbtn2",onClick:function(){xcsv(allS)}},"Exporteer sessies (CSV)"),
+      showW?e("div",{key:"wmod",className:"ov",onClick:function(){setShowW(false)}},
+        e("div",{className:"mo",onClick:function(ev){ev.stopPropagation()}},
+          e("div",{className:"moh"},e("span",{className:"mot"},"Gewicht loggen"),e("button",{className:"moc",onClick:function(){setShowW(false)}},"\u00d7")),
+          e("div",{className:"mnl"},"Gewicht (kg)"),
+          e("input",{className:"inp",type:"number",step:"0.1",placeholder:"bv. 73.5",value:wIn,onChange:function(ev){setWIn(ev.target.value)},autoFocus:true}),
+          e("button",{className:"mpbtn",onClick:logW},"Opslaan")
+        )
+      ):null
+    ];
+  }
+
+  return e("div",{className:"ss"},
+    e("div",{className:"hdr"},
+      e("h1",{className:"h1"},tab==="planning"?"Week "+weekNr(mon):tab==="voeding"?"Voeding":"Progressie"),
+      e("p",{className:"sub"},tab==="planning"?fmt(ds[0])+" \u2014 "+fmt(ds[6]):tab==="voeding"?FD[sel]+" "+ds[sel].getDate()+" "+MN[ds[sel].getMonth()]+(wd.sports[sel]?" \u00b7 "+slbl(sel):""):"Houd je voortgang bij")
+    ),
+    e("div",{className:"cnt"},
+      tab==="planning"?planTab():tab==="voeding"?voedTab():progTab()
+    ),
+    e("div",{className:"nav"},
+      [{id:"planning",l:"Planning"},{id:"voeding",l:"Voeding"},{id:"progressie",l:"Progressie"}].map(function(t){
+        return e("div",{key:t.id,className:"ni",onClick:function(){setTab(t.id)}},
+          e("div",{className:"ndot "+(tab===t.id?"on":"off")}),
+          e("div",{className:"nlbl "+(tab===t.id?"on":"off")},t.l)
+        )
+      })
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(e(App));
+</script>
+</body>
+</html>
