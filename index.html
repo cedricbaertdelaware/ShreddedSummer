@@ -208,7 +208,7 @@ function getMon(d){const t=new Date(d);const y=t.getDay();t.setDate(t.getDate()-
 function fmt(d){return d.getDate()+" "+MN[d.getMonth()]}
 function wKey(m){return m.getFullYear()+"-"+String(m.getMonth()+1).padStart(2,"0")+"-"+String(m.getDate()).padStart(2,"0")}
 function localDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function calcSp(sp){const f=[];sp.forEach(function(s,i){if(s==="fitness")f.push(i)});const n=f.length,r={};if(n>=1)r[f[0]]="push";if(n>=2)r[f[1]]="pull";if(n>=3)r[f[2]]="legs";for(let i=3;i<n;i++)r[f[i]]="full body";return r}
+function calcSp(sp){const f=[];sp.forEach(function(s,i){if(s==="fitness")f.push(i)});const n=f.length,r={};if(n>=1)r[f[0]]="upper body";if(n>=2)r[f[1]]="lower body";for(var i=2;i<n;i++)r[f[i]]="full body";return r}
 var BURN_PER_MIN={fitness:6,tennis:8.5,padel:7.5};
 function calcBurn(sport,durMin){var rate=BURN_PER_MIN[sport]||0;return Math.round(rate*durMin)}
 const SK="ss2";
@@ -253,7 +253,7 @@ function App(){
 
   const ov=function(k){return tot[k]>G[k]};
   const anyOv=["kcal","prot","kh","vet"].some(ov);
-  const setSport=function(i,s){upd(function(w){w.sports[i]=s;return w});if(s==="fitness"||s==="tennis"){setSH(1);setSM2(0)}else if(s==="padel"){setSH(1);setSM2(30)}};
+  const setSport=function(i,s){var cur=wd.sports[i];if(cur===s){upd(function(w){w.sports[i]=null;return w})}else{upd(function(w){w.sports[i]=s;return w});if(s==="fitness"||s==="tennis"){setSH(1);setSM2(0)}else if(s==="padel"){setSH(1);setSM2(30)}}};
   const addM=function(f,q){q=q||1;const id=f.id+"_"+Date.now();upd(function(w){if(!w.meals[sel])w.meals[sel]={};w.meals[sel][id]=Object.assign({},f,{qty:q});return w});setShowAdd(false);setSrch("");setAq({})};
   const delM=function(id){upd(function(w){delete w.meals[sel][id];return w})};
   const logS=function(){const dur=sH*60+sM2;const sport=wd.sports[sel];const spl=sp[sel]||null;const dt=localDate(ds[sel]);const burn=calcBurn(sport,dur);upd(function(w){if(!w.sessions)w.sessions=[];const ex=w.sessions.findIndex(function(s){return s.date===dt});const en={date:dt,sport:sport||"fitness",split:spl,dur:dur,burn:burn};if(ex>=0)w.sessions[ex]=en;else w.sessions.push(en);return w})};
