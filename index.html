@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#111827">
 <title>Shredded Summer</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='108' fill='%23111827'/%3E%3Ccircle cx='256' cy='120' r='44' fill='%2310B981'/%3E%3Cpath d='M256 172c-18 0-34 10-42 26l-52 80c-4 7-1 16 6 20s16 1 20-6l38-58v98l-48 72c-4 7-2 16 5 20s16 2 20-5l45-68h16l45 68c4 7 13 9 20 5s9-13 5-20l-48-72V234l38 58c4 7 13 9 20 6s9-13 6-20l-52-80c-8-16-24-26-42-26z' fill='%2310B981'/%3E%3Cpath d='M178 218l-40-60c-4-7-13-9-20-5s-9 13-5 20l36 54c6-4 18-8 29-9zM334 218l40-60c4-7 13-9 20-5s9 13 5 20l-36 54c-6-4-18-8-29-9z' fill='%2310B981'/%3E%3Cpath d='M108 168a20 20 0 1 1 0-1M404 168a20 20 0 1 1 0-1' fill='none' stroke='%2310B981' stroke-width='14' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='108' fill='%23111827'/%3E%3Ccircle cx='256' cy='120' r='44' fill='%2310B981'/%3E%3Cpath d='M256 172c-18 0-34 10-42 26l-52 80c-4 7-1 16 6 20s16 1 20-6l38-58v98l-48 72c-4 7-2 16 5 20s16 2 20-5l45-68h16l45 68c4 7 13 9 20 5s9-13 5-20l-48-72V234l38 58c4 7 13 9 20 6s9-13 6-20l-52-80c-8-16-24-26-42-26z' fill='%2310B981'/%3E%3Cpath d='M178 218l-40-60c-4-7-13-9-20-5s-9 13-5 20l36 54c6-4 18-8 29-9zM334 218l40-60c4-7 13-9 20-5s9 13 5 20l-36 54c-6-4-18-8-29-9z' fill='%2310B981'/%3E%3Cpath d='M108 168a20 20 0 1 1 0-1M404 168a20 20 0 1 1 0-1' fill='none' stroke='%2310B981' stroke-width='14' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU2hyZWRkZWQgU3VtbWVyIiwic2hvcnRfbmFtZSI6IlNocmVkZGVkIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzExMTgyNyIsInRoZW1lX2NvbG9yIjoiIzExMTgyNyIsInN0YXJ0X3VybCI6Ii4ifQ==">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap" rel="stylesheet">
 <style>
@@ -250,6 +252,7 @@ function App(){
   const addM=function(f,q){q=q||1;const id=f.id+"_"+Date.now();upd(function(w){if(!w.meals[sel])w.meals[sel]={};w.meals[sel][id]=Object.assign({},f,{qty:q});return w});setShowAdd(false);setSrch("");setAq({})};
   const delM=function(id){upd(function(w){delete w.meals[sel][id];return w})};
   const logS=function(){const dur=sH*60+sM2;const sport=wd.sports[sel];const spl=sp[sel]||null;const dt=ds[sel].toISOString().split("T")[0];upd(function(w){if(!w.sessions)w.sessions=[];const ex=w.sessions.findIndex(function(s){return s.date===dt});const en={date:dt,sport:sport||"fitness",split:spl,dur:dur};if(ex>=0)w.sessions[ex]=en;else w.sessions.push(en);return w})};
+  const delS=function(date){setData(function(p){const nd=JSON.parse(JSON.stringify(p));Object.keys(nd).forEach(function(wk){if(nd[wk].sessions){nd[wk].sessions=nd[wk].sessions.filter(function(s){return s.date!==date})}});sv(nd);return nd})};
   const logW=function(){const w=parseFloat(wIn);if(isNaN(w))return;upd(function(d){d.weight=w;return d});setShowW(false);setWIn("")};
   const togG=function(it){upd(function(w){if(!w.gc)w.gc={};w.gc[it]=!w.gc[it];return w})};
   const groc=useMemo(function(){const s=new Set();wd.meals.forEach(function(m){Object.values(m||{}).forEach(function(i){if(i.name)s.add(i.name)})});return Array.from(s)},[wd.meals]);
@@ -317,7 +320,7 @@ function App(){
           const du=Math.floor(s.dur/60)+"u"+String(s.dur%60).padStart(2,"0");
           const pc=s.sport==="tennis"?"pill-b":s.sport==="padel"?"pill-a":"pill-g";
           const pt=s.split?s.split.charAt(0).toUpperCase()+s.split.slice(1):s.sport.charAt(0).toUpperCase()+s.sport.slice(1);
-          return e("div",{key:i,className:"rrow"},e("div",{className:"rrl"},e("span",{className:"pill "+pc},pt),e("span",{className:"rrd"},l)),e("span",{className:"rrt"},du))
+          return e("div",{key:i,className:"rrow"},e("div",{className:"rrl"},e("span",{className:"pill "+pc},pt),e("span",{className:"rrd"},l)),e("div",{style:{display:"flex",alignItems:"center",gap:10}},e("span",{className:"rrt"},du),e("button",{className:"mdel",onClick:function(){delS(s.date)},style:{width:20,height:20,fontSize:12,borderRadius:6}},"\u00d7")))
         })
       ):null
     ];
