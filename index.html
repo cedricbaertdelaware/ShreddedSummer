@@ -205,6 +205,7 @@ function weekNr(d){const t=new Date(d);t.setHours(0,0,0,0);t.setDate(t.getDate()
 function getMon(d){const t=new Date(d);const y=t.getDay();t.setDate(t.getDate()-y+(y===0?-6:1));t.setHours(0,0,0,0);return t}
 function fmt(d){return d.getDate()+" "+MN[d.getMonth()]}
 function wKey(m){return m.getFullYear()+"-"+String(m.getMonth()+1).padStart(2,"0")+"-"+String(m.getDate()).padStart(2,"0")}
+function localDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function calcSp(sp){const f=[];sp.forEach(function(s,i){if(s==="fitness")f.push(i)});const n=f.length,r={};if(n>=1)r[f[0]]="push";if(n>=2)r[f[1]]="pull";if(n>=3)r[f[2]]="legs";for(let i=3;i<n;i++)r[f[i]]="full body";return r}
 const SK="ss2";
 function ld(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):{}}catch(x){return{}}}
@@ -251,7 +252,7 @@ function App(){
   const setSport=function(i,s){upd(function(w){w.sports[i]=s;return w});if(s==="fitness"||s==="tennis"){setSH(1);setSM2(0)}else if(s==="padel"){setSH(1);setSM2(30)}};
   const addM=function(f,q){q=q||1;const id=f.id+"_"+Date.now();upd(function(w){if(!w.meals[sel])w.meals[sel]={};w.meals[sel][id]=Object.assign({},f,{qty:q});return w});setShowAdd(false);setSrch("");setAq({})};
   const delM=function(id){upd(function(w){delete w.meals[sel][id];return w})};
-  const logS=function(){const dur=sH*60+sM2;const sport=wd.sports[sel];const spl=sp[sel]||null;const dt=ds[sel].toISOString().split("T")[0];upd(function(w){if(!w.sessions)w.sessions=[];const ex=w.sessions.findIndex(function(s){return s.date===dt});const en={date:dt,sport:sport||"fitness",split:spl,dur:dur};if(ex>=0)w.sessions[ex]=en;else w.sessions.push(en);return w})};
+  const logS=function(){const dur=sH*60+sM2;const sport=wd.sports[sel];const spl=sp[sel]||null;const dt=localDate(ds[sel]);upd(function(w){if(!w.sessions)w.sessions=[];const ex=w.sessions.findIndex(function(s){return s.date===dt});const en={date:dt,sport:sport||"fitness",split:spl,dur:dur};if(ex>=0)w.sessions[ex]=en;else w.sessions.push(en);return w})};
   const delS=function(date){setData(function(p){const nd=JSON.parse(JSON.stringify(p));Object.keys(nd).forEach(function(wk){if(nd[wk].sessions){nd[wk].sessions=nd[wk].sessions.filter(function(s){return s.date!==date})}});sv(nd);return nd})};
   const logW=function(){const w=parseFloat(wIn);if(isNaN(w))return;upd(function(d){d.weight=w;return d});setShowW(false);setWIn("")};
   const togG=function(it){upd(function(w){if(!w.gc)w.gc={};w.gc[it]=!w.gc[it];return w})};
@@ -259,7 +260,7 @@ function App(){
 
   const scls=function(s){return s||"empty"};
   const slbl=function(i){const s=wd.sports[i];if(!s)return"\u2014";if(s==="tennis")return"Tennis";if(s==="padel")return"Padel";if(s==="rust")return"Rust";if(s==="fitness"&&sp[i]){const x=sp[i];return x.charAt(0).toUpperCase()+x.slice(1)}return s};
-  const slog=wd.sessions&&wd.sessions.some(function(s){return s.date===(ds[sel]&&ds[sel].toISOString().split("T")[0])});
+  const slog=wd.sessions&&wd.sessions.some(function(s){return s.date===(ds[sel]&&localDate(ds[sel]))});
   const filt=useMemo(function(){
     const h=new Date().getHours();
     let co;
