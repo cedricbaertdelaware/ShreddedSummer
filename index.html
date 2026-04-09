@@ -227,6 +227,9 @@ var _mn=us({name:"",kcal:"",prot:"",kh:"",vet:""}),man=_mn[0],setMan=_mn[1];
 var _aq=us({}),aq=_aq[0],setAq=_aq[1];
 var _sw=us(false),showW=_sw[0],setShowW=_sw[1];
 var _wi=us(""),wIn=_wi[0],setWIn=_wi[1];
+var _sh=us(1),sH=_sh[0],setSH=_sh[1];
+var _sm2=us(0),sM=_sm2[0],setSM=_sm2[1];
+var _cf=us(lc),cFoods=_cf[0],setCF=_cf[1];
 
 // Firebase sync — listen for changes from cloud
 ue(function(){
@@ -234,9 +237,6 @@ ue(function(){
   var unsub2=cfRef.on("value",function(snap){var v=snap.val();if(v){setCF(v);try{localStorage.setItem(CFK,JSON.stringify(v))}catch(x){}}});
   return function(){dbRef.off("value",unsub1);cfRef.off("value",unsub2)};
 },[]);
-var _sh=us(1),sH=_sh[0],setSH=_sh[1];
-var _sm2=us(0),sM=_sm2[0],setSM=_sm2[1];
-var _cf=us(lc),cFoods=_cf[0],setCF=_cf[1];
 
 var k=um(function(){return wk(mon)},[mon]);
 var emp={sports:Array(7).fill(null),meals:[{},{},{},{},{},{},{}],sessions:[],gc:{},water:Array(7).fill(0)};
