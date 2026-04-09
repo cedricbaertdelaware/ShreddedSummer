@@ -197,22 +197,27 @@ function cs(sp){var f=[],i;sp.forEach(function(s,i){if(s==="fitness")f.push(i)})
 var BPM={fitness:6,tennis:8.5,padel:7.5};
 function cb(s,d){return Math.round((BPM[s]||0)*d)}
 var SK="ss2",CFK="ss2_cf";
-// Firebase setup
-var fbConfig={apiKey:"AIzaSyD1WvVVupH8XvmNGzbEa9qo-VbnRjQs8Oo",authDomain:"shredded-summer.firebaseapp.com",databaseURL:"https://shredded-summer-default-rtdb.europe-west1.firebasedatabase.app",projectId:"shredded-summer",storageBucket:"shredded-summer.firebasestorage.app",messagingSenderId:"176821681962",appId:"1:176821681962:web:6733d34ddeaee3680fe853"};
-var fbApp=firebase.initializeApp(fbConfig);
-var db=firebase.database();
-var dbRef=db.ref("data");
-var cfRef=db.ref("customFoods");
+// Firebase setup - graceful fallback if unavailable
+var dbRef=null,cfRef=null;
+try{
+  var fbConfig={apiKey:"AIzaSyD1WvVVupH8XvmNGzbEa9qo-VbnRjQs8Oo",authDomain:"shredded-summer.firebaseapp.com",databaseURL:"https://shredded-summer-default-rtdb.europe-west1.firebasedatabase.app",projectId:"shredded-summer",storageBucket:"shredded-summer.firebasestorage.app",messagingSenderId:"176821681962",appId:"1:176821681962:web:6733d34ddeaee3680fe853"};
+  firebase.initializeApp(fbConfig);
+  var db=firebase.database();
+  dbRef=db.ref("data");
+  cfRef=db.ref("customFoods");
+}catch(x){console.log("Firebase niet beschikbaar, localStorage modus")}
 // Load from localStorage as initial cache, Firebase overwrites on connect
 function lo(){try{var r=localStorage.getItem(SK);return r?JSON.parse(r):{}}catch(x){return{}}}
 function sa(d){
   try{localStorage.setItem(SK,JSON.stringify(d))}catch(x){};
-  // Firebase drops null in arrays, convert to safe values
-  var safe=JSON.parse(JSON.stringify(d,function(k,v){return v===null?false:v}));
-  dbRef.set(safe);
+  if(!dbRef)return;
+  try{
+    var safe=JSON.parse(JSON.stringify(d,function(k,v){return v===null?false:v}));
+    dbRef.set(safe);
+  }catch(x){}
 }
 function lc(){try{var r=localStorage.getItem(CFK);return r?JSON.parse(r):[]}catch(x){return[]}}
-function sc(d){try{localStorage.setItem(CFK,JSON.stringify(d))}catch(x){};cfRef.set(d)}
+function sc(d){try{localStorage.setItem(CFK,JSON.stringify(d))}catch(x){};if(cfRef)try{cfRef.set(d)}catch(x){}}
 function xc(s){var h="Datum,Sport,Split,Duur (min),Kcal\n",r=s.map(function(x){return x.date+","+x.sport+","+(x.split||"")+","+x.dur+","+(x.burn||cb(x.sport,x.dur))}).join("\n");var b=new Blob([h+r],{type:"text/csv"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="sessies.csv";a.click();URL.revokeObjectURL(u)}
 // SVG icons as functions
 function iCal(c){return e("svg",{width:20,height:20,viewBox:"0 0 24 24",fill:"none",stroke:c,strokeWidth:2.5,strokeLinecap:"round",strokeLinejoin:"round"},e("rect",{x:3,y:4,width:18,height:18,rx:2}),e("line",{x1:16,y1:2,x2:16,y2:6}),e("line",{x1:8,y1:2,x2:8,y2:6}),e("line",{x1:3,y1:10,x2:21,y2:10}))}
@@ -238,35 +243,52 @@ var _cf=us(lc),cFoods=_cf[0],setCF=_cf[1];
 
 // Firebase sync — listen for changes from cloud
 ue(function(){
+  if(!dbRef||!cfRef)return;
   dbRef.on("value",function(snap){
     try{
       var v=snap.val();
-      if(v&&typeof v==="object"){
-        // Firebase converts arrays to objects, fix water and sports and meals
-        Object.keys(v).forEach(function(wk){
-          var w=v[wk];
-          if(w){
-            if(w.sports&&!Array.isArray(w.sports)){var sa2=[];for(var i=0;i<7;i++)sa2[i]=w.sports[i]||null;w.sports=sa2}
-            else if(Array.isArray(w.sports)){w.sports=w.sports.map(function(s){return s===false?null:s})}
-            if(w.water&&!Array.isArray(w.water)){var wa=[];for(var i=0;i<7;i++)wa[i]=w.water[i]||0;w.water=wa}
-            if(w.meals&&!Array.isArray(w.meals)){var ma=[];for(var i=0;i<7;i++)ma[i]=w.meals[i]||{};w.meals=ma}
-            if(w.sessions&&!Array.isArray(w.sessions)){w.sessions=Object.values(w.sessions)}
-          }
-        });
-        setData(v);try{localStorage.setItem(SK,JSON.stringify(v))}catch(x){}
-      }
-    }catch(x){console.log("fb data err",x)}
+      if(!v||typeof v!=="object")return;
+      var fixed={};
+      Object.keys(v).forEach(function(key){
+        var w=v[key];
+        if(!w||typeof w!=="object")return;
+        var fw={};
+        // sports
+        if(w.sports){
+          if(!Array.isArray(w.sports)){var a=[];for(var i=0;i<7;i++)a[i]=w.sports[i]||null;fw.sports=a}
+          else{fw.sports=w.sports.map(function(s){return s===false?null:s})}
+        }else{fw.sports=[null,null,null,null,null,null,null]}
+        // meals
+        if(w.meals){
+          if(!Array.isArray(w.meals)){var m=[];for(var i=0;i<7;i++)m[i]=w.meals[i]||{};fw.meals=m}
+          else{fw.meals=w.meals.map(function(x){return x||{}})}
+        }else{fw.meals=[{},{},{},{},{},{},{}]}
+        // water
+        if(w.water){
+          if(!Array.isArray(w.water)){var wa=[];for(var i=0;i<7;i++)wa[i]=w.water[i]||0;fw.water=wa}
+          else{fw.water=w.water}
+        }else{fw.water=[0,0,0,0,0,0,0]}
+        // sessions
+        fw.sessions=w.sessions?Array.isArray(w.sessions)?w.sessions:Object.values(w.sessions):[];
+        // gc, weight
+        fw.gc=w.gc||{};
+        if(w.weight)fw.weight=w.weight;
+        fixed[key]=fw;
+      });
+      setData(fixed);
+      try{localStorage.setItem(SK,JSON.stringify(fixed))}catch(x){}
+    }catch(x){console.error("fb data err",x)}
   });
   cfRef.on("value",function(snap){
     try{
       var v=snap.val();
-      if(v){
-        var arr=Array.isArray(v)?v:Object.values(v);
-        setCF(arr);try{localStorage.setItem(CFK,JSON.stringify(arr))}catch(x){}
-      }
-    }catch(x){console.log("fb cf err",x)}
+      if(!v)return;
+      var arr=Array.isArray(v)?v:Object.values(v);
+      setCF(arr);
+      try{localStorage.setItem(CFK,JSON.stringify(arr))}catch(x){}
+    }catch(x){console.error("fb cf err",x)}
   });
-  return function(){dbRef.off();cfRef.off()};
+  return function(){if(dbRef)dbRef.off();if(cfRef)cfRef.off()};
 },[]);
 
 var k=um(function(){return wk(mon)},[mon]);
