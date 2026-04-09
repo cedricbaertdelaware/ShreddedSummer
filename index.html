@@ -205,7 +205,12 @@ var dbRef=db.ref("data");
 var cfRef=db.ref("customFoods");
 // Load from localStorage as initial cache, Firebase overwrites on connect
 function lo(){try{var r=localStorage.getItem(SK);return r?JSON.parse(r):{}}catch(x){return{}}}
-function sa(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(x){};dbRef.set(d)}
+function sa(d){
+  try{localStorage.setItem(SK,JSON.stringify(d))}catch(x){};
+  // Firebase drops null in arrays, convert to safe values
+  var safe=JSON.parse(JSON.stringify(d,function(k,v){return v===null?false:v}));
+  dbRef.set(safe);
+}
 function lc(){try{var r=localStorage.getItem(CFK);return r?JSON.parse(r):[]}catch(x){return[]}}
 function sc(d){try{localStorage.setItem(CFK,JSON.stringify(d))}catch(x){};cfRef.set(d)}
 function xc(s){var h="Datum,Sport,Split,Duur (min),Kcal\n",r=s.map(function(x){return x.date+","+x.sport+","+(x.split||"")+","+x.dur+","+(x.burn||cb(x.sport,x.dur))}).join("\n");var b=new Blob([h+r],{type:"text/csv"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="sessies.csv";a.click();URL.revokeObjectURL(u)}
@@ -233,9 +238,35 @@ var _cf=us(lc),cFoods=_cf[0],setCF=_cf[1];
 
 // Firebase sync — listen for changes from cloud
 ue(function(){
-  var unsub1=dbRef.on("value",function(snap){var v=snap.val();if(v){setData(v);try{localStorage.setItem(SK,JSON.stringify(v))}catch(x){}}});
-  var unsub2=cfRef.on("value",function(snap){var v=snap.val();if(v){setCF(v);try{localStorage.setItem(CFK,JSON.stringify(v))}catch(x){}}});
-  return function(){dbRef.off("value",unsub1);cfRef.off("value",unsub2)};
+  dbRef.on("value",function(snap){
+    try{
+      var v=snap.val();
+      if(v&&typeof v==="object"){
+        // Firebase converts arrays to objects, fix water and sports and meals
+        Object.keys(v).forEach(function(wk){
+          var w=v[wk];
+          if(w){
+            if(w.sports&&!Array.isArray(w.sports)){var sa2=[];for(var i=0;i<7;i++)sa2[i]=w.sports[i]||null;w.sports=sa2}
+            else if(Array.isArray(w.sports)){w.sports=w.sports.map(function(s){return s===false?null:s})}
+            if(w.water&&!Array.isArray(w.water)){var wa=[];for(var i=0;i<7;i++)wa[i]=w.water[i]||0;w.water=wa}
+            if(w.meals&&!Array.isArray(w.meals)){var ma=[];for(var i=0;i<7;i++)ma[i]=w.meals[i]||{};w.meals=ma}
+            if(w.sessions&&!Array.isArray(w.sessions)){w.sessions=Object.values(w.sessions)}
+          }
+        });
+        setData(v);try{localStorage.setItem(SK,JSON.stringify(v))}catch(x){}
+      }
+    }catch(x){console.log("fb data err",x)}
+  });
+  cfRef.on("value",function(snap){
+    try{
+      var v=snap.val();
+      if(v){
+        var arr=Array.isArray(v)?v:Object.values(v);
+        setCF(arr);try{localStorage.setItem(CFK,JSON.stringify(arr))}catch(x){}
+      }
+    }catch(x){console.log("fb cf err",x)}
+  });
+  return function(){dbRef.off();cfRef.off()};
 },[]);
 
 var k=um(function(){return wk(mon)},[mon]);
