@@ -207,7 +207,25 @@ try{
   cfRef=db.ref("customFoods");
 }catch(x){console.log("Firebase niet beschikbaar, localStorage modus")}
 // Load from localStorage as initial cache, Firebase overwrites on connect
-function lo(){try{var r=localStorage.getItem(SK);return r?JSON.parse(r):{}}catch(x){return{}}}
+function lo(){
+  try{
+    var r=localStorage.getItem(SK);
+    if(!r)return{};
+    var d=JSON.parse(r);
+    if(!d||typeof d!=="object")return{};
+    // Validate and fix each week entry
+    Object.keys(d).forEach(function(k){
+      var w=d[k];
+      if(!w||typeof w!=="object"){delete d[k];return}
+      if(!Array.isArray(w.sports))w.sports=[null,null,null,null,null,null,null];
+      if(!Array.isArray(w.meals))w.meals=[{},{},{},{},{},{},{}];
+      if(!Array.isArray(w.sessions))w.sessions=w.sessions?Object.values(w.sessions):[];
+      if(!Array.isArray(w.water))w.water=[0,0,0,0,0,0,0];
+      if(!w.gc)w.gc={};
+    });
+    return d;
+  }catch(x){return{}}
+}
 function sa(d){
   try{localStorage.setItem(SK,JSON.stringify(d))}catch(x){};
   if(!dbRef)return;
@@ -292,8 +310,8 @@ ue(function(){
 },[]);
 
 var k=um(function(){return wk(mon)},[mon]);
-var emp={sports:Array(7).fill(null),meals:[{},{},{},{},{},{},{}],sessions:[],gc:{},water:Array(7).fill(0)};
-var wd=um(function(){return data[k]||emp},[data,k]);
+var emp={sports:[null,null,null,null,null,null,null],meals:[{},{},{},{},{},{},{}],sessions:[],gc:{},water:[0,0,0,0,0,0,0]};
+var wd=um(function(){var w=data[k]||emp;return{sports:Array.isArray(w.sports)?w.sports:emp.sports,meals:Array.isArray(w.meals)?w.meals:emp.meals,sessions:Array.isArray(w.sessions)?w.sessions:[],gc:w.gc||{},water:Array.isArray(w.water)?w.water:emp.water,weight:w.weight||null}},[data,k]);
 var sp=um(function(){return cs(wd.sports)},[wd.sports]);
 var ds=um(function(){return DL.map(function(_,i){var d=new Date(mon);d.setDate(d.getDate()+i);return d})},[mon]);
 
@@ -306,13 +324,13 @@ var tot=um(function(){return mi.reduce(function(a,x){var i=x[1],q=i.qty||1;retur
 var dayBurn=um(function(){var dt=ds[sel]?ld(ds[sel]):null;var s=wd.sessions&&wd.sessions.find(function(x){return x.date===dt});return s?s.burn||cb(s.sport,s.dur):0},[wd,sel,ds]);
 var remaining=G.kcal+dayBurn-Math.round(tot.kcal);
 
-var allS=um(function(){var s=[];Object.values(data).forEach(function(w){if(w.sessions)s.push.apply(s,w.sessions)});return s.sort(function(a,b){return b.date.localeCompare(a.date)})},[data]);
+var allS=um(function(){var s=[];Object.values(data).forEach(function(w){if(w&&w.sessions){var ss=Array.isArray(w.sessions)?w.sessions:Object.values(w.sessions);s.push.apply(s,ss)}});return s.sort(function(a,b){return(b.date||"").localeCompare(a.date||"")})},[data]);
 var rec=allS.slice(0,7);
 var allW=um(function(){var w=[];Object.entries(data).forEach(function(x){if(x[1].weight)w.push({week:x[0],weight:x[1].weight})});return w.sort(function(a,b){return a.week.localeCompare(b.week)})},[data]);
 var curW=allW.length?allW[allW.length-1].weight:74;
 var bmi=Math.round(curW/(1.74*1.74)*10)/10;
 var wSt=um(function(){var ss=wd.sessions||[],tt=ss.reduce(function(a,s){return a+(s.dur||0)},0),tb=ss.reduce(function(a,s){return a+(s.burn||cb(s.sport,s.dur))},0);var tp=0,tk=0,dc=0;wd.meals.forEach(function(m){var it=Object.values(m||{});if(it.length){dc++;it.forEach(function(i){tp+=(i.prot||0)*(i.qty||1);tk+=(i.kcal||0)*(i.qty||1)})}});return{sc:ss.length,tt:tt,tb:tb,ap:dc?Math.round(tp/dc):0,ak:dc?Math.round(tk/dc):0}},[wd]);
-var streak=um(function(){var c=0,t=new Date();t.setHours(0,0,0,0);for(var i=0;i<365;i++){var d=new Date(t);d.setDate(d.getDate()-i);var m=gm(d),key=wk(m),w=data[key];if(!w)break;var di=d.getDay()===0?6:d.getDay()-1;if(w.sports[di]||Object.values(w.meals[di]||{}).length)c++;else break}return c},[data]);
+var streak=um(function(){var c=0,t=new Date();t.setHours(0,0,0,0);for(var i=0;i<365;i++){var d=new Date(t);d.setDate(d.getDate()-i);var m=gm(d),key=wk(m),w=data[key];if(!w)break;var di=d.getDay()===0?6:d.getDay()-1;var sp2=w.sports&&w.sports[di];var ml=w.meals&&w.meals[di];if(sp2||Object.values(ml||{}).length)c++;else break}return c},[data]);
 var dayWater=(wd.water&&wd.water[sel])||0;
 
 var ov=function(k){return tot[k]>G[k]};
