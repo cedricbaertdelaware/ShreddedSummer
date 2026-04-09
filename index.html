@@ -108,7 +108,7 @@ html,body,#root{height:100dvh;overflow:hidden;background:#E8E0F0;font-family:'DM
 .sb2{margin:0 14px 10px;padding:12px;border-radius:16px;background:#fff;color:var(--tx);font-size:13px;font-weight:600;border:1px solid var(--bd);cursor:pointer;width:calc(100% - 28px);font-family:inherit}
 .nv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:50}
 .nvw{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:22px;margin:0 12px;padding:8px 4px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 2px 16px rgba(0,0,0,.1)}
-.nvb{height:calc(10px + env(safe-area-inset-bottom));background:#E8E0F0;margin-top:-1px}
+.nvb{height:env(safe-area-inset-bottom);background:#E8E0F0;margin-top:-1px}
 .ni{text-align:center;cursor:pointer;padding:6px 18px;border-radius:14px;transition:background .15s}
 .ni.ac{background:#F3F4F6}
 .ni svg{display:block;margin:0 auto 3px}
@@ -134,7 +134,7 @@ html,body,#root{height:100dvh;overflow:hidden;background:#E8E0F0;font-family:'DM
 .mpb{width:100%;padding:12px;border-radius:14px;background:var(--ac);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;margin-top:14px}
 .msb{width:100%;padding:10px;border-radius:12px;background:#F9FAFB;color:var(--tx);font-size:13px;font-weight:600;border:1px solid #E5E7EB;cursor:pointer;font-family:inherit;margin-top:6px}
 .ef{text-align:center;padding:20px;color:var(--t3);font-size:13px}
-.cn{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(70px + env(safe-area-inset-bottom));scroll-behavior:smooth}
+.cn{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(56px + env(safe-area-inset-bottom));scroll-behavior:smooth}
 .cth{font-size:11px;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;padding:10px 0 4px;border-bottom:1px solid #F3F4F6}
 .ic{display:flex;gap:10px;justify-content:center}
 .ici{text-align:center;width:56px;cursor:pointer}
