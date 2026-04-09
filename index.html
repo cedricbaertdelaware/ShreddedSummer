@@ -16,8 +16,8 @@
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0}
-html,body,#root{height:100%;overflow:hidden;background:#E8E0F0;font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-.A{--ac:#10B981;--ac2:#D1FAE5;--ac3:#059669;--pu:#6366F1;--am:#F59E0B;--rd:#EF4444;--co:#E85D3A;--tx:#1F2937;--t2:#6B7280;--t3:#9CA3AF;--cd:#fff;--bg:#E8E0F0;--bg2:#F3EFF8;--bd:#E5E1ED;max-width:430px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg);color:var(--tx);position:relative}
+html,body,#root{height:100dvh;overflow:hidden;background:#E8E0F0;font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+.A{--ac:#10B981;--ac2:#D1FAE5;--ac3:#059669;--pu:#6366F1;--am:#F59E0B;--rd:#EF4444;--co:#E85D3A;--tx:#1F2937;--t2:#6B7280;--t3:#9CA3AF;--cd:#fff;--bg:#E8E0F0;--bg2:#F3EFF8;--bd:#E5E1ED;max-width:430px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--bg);color:var(--tx);position:relative;overflow:hidden}
 .hd{padding:16px 20px 4px;padding-top:calc(16px + env(safe-area-inset-top))}
 .h1{font-size:26px;font-weight:800;letter-spacing:-.5px}
 .su{font-size:13px;color:var(--t2);margin-top:2px}
@@ -106,9 +106,10 @@ html,body,#root{height:100%;overflow:hidden;background:#E8E0F0;font-family:'DM S
 .pb2{margin:0 14px 10px;padding:13px;border-radius:16px;background:var(--ac);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;width:calc(100% - 28px);font-family:inherit;box-shadow:0 2px 8px rgba(16,185,129,.2)}
 .pb2:active{transform:scale(.98)}
 .sb2{margin:0 14px 10px;padding:12px;border-radius:16px;background:#fff;color:var(--tx);font-size:13px;font-weight:600;border:1px solid var(--bd);cursor:pointer;width:calc(100% - 28px);font-family:inherit}
-.nv{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:calc(100% - 20px);max-width:410px;background:#fff;border-radius:22px;padding:8px 4px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 -2px 20px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);z-index:50}
-.ni{text-align:center;cursor:pointer;padding:4px 14px}
-.ni svg{display:block;margin:0 auto 2px}
+.nv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:linear-gradient(to bottom,rgba(232,224,240,0) 0%,#E8E0F0 8px,#E8E0F0 100%);padding:8px 16px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;align-items:center;z-index:50}
+.ni{text-align:center;cursor:pointer;padding:8px 22px;border-radius:16px;transition:all .2s}
+.ni.ac{background:rgba(0,0,0,.06)}
+.ni svg{display:block;margin:0 auto 3px}
 .ni .nl{font-size:10px;font-weight:600;color:var(--t3)}
 .ni.ac .nl{color:var(--ac);font-weight:700}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:flex-start;justify-content:center;z-index:100;backdrop-filter:blur(6px)}
@@ -131,7 +132,7 @@ html,body,#root{height:100%;overflow:hidden;background:#E8E0F0;font-family:'DM S
 .mpb{width:100%;padding:12px;border-radius:14px;background:var(--ac);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;margin-top:14px}
 .msb{width:100%;padding:10px;border-radius:12px;background:#F9FAFB;color:var(--tx);font-size:13px;font-weight:600;border:1px solid #E5E7EB;cursor:pointer;font-family:inherit;margin-top:6px}
 .ef{text-align:center;padding:20px;color:var(--t3);font-size:13px}
-.cn{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(100px + env(safe-area-inset-bottom));scroll-behavior:smooth}
+.cn{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(80px + env(safe-area-inset-bottom));scroll-behavior:smooth}
 .cth{font-size:11px;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;padding:10px 0 4px;border-bottom:1px solid #F3F4F6}
 .ic{display:flex;gap:10px;justify-content:center}
 .ici{text-align:center;width:56px;cursor:pointer}
