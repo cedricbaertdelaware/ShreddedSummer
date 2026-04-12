@@ -384,7 +384,7 @@ var updSet=function(key,val){setSett(function(p){var n=Object.assign({},p);n[key
 // Apply dark mode to body
 ue(function(){document.documentElement.setAttribute("data-theme",dark?"dark":"light");var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=dark?"#111827":"#E8E0F0";document.body.style.background=dark?"#111827":"#E8E0F0";document.getElementById("root").style.background=dark?"#111827":"#E8E0F0"},[dark]);
 
-ue(function(){if(!window.visualViewport)return;var onResize=function(){var vv=window.visualViewport;var diff=window.innerHeight-vv.height;var modals=document.querySelectorAll(".mo");modals.forEach(function(m){m.style.bottom=diff>50?diff+"px":"0"})};window.visualViewport.addEventListener("resize",onResize);window.visualViewport.addEventListener("scroll",onResize);return function(){window.visualViewport.removeEventListener("resize",onResize);window.visualViewport.removeEventListener("scroll",onResize)}},[]);
+ue(function(){if(!window.visualViewport)return;var onResize=function(){var vv=window.visualViewport;var diff=window.innerHeight-vv.height;var modals=document.querySelectorAll(".mo");modals.forEach(function(m){if(diff>50){m.style.bottom=diff+"px";m.style.maxHeight=(vv.height-20)+"px"}else{m.style.bottom="0";m.style.maxHeight=""}})};window.visualViewport.addEventListener("resize",onResize);window.visualViewport.addEventListener("scroll",onResize);return function(){window.visualViewport.removeEventListener("resize",onResize);window.visualViewport.removeEventListener("scroll",onResize)}},[]);
 
 // Firebase sync - listen for changes from cloud
 ue(function(){
