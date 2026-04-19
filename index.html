@@ -203,15 +203,31 @@ html,body,#root{height:100%;overflow:hidden;background:#E8E0F0;font-family:'DM S
 [data-theme="dark"] .wt{color:#FCA5A5}
 [data-theme="dark"] .wx{color:#F87171}
 [data-theme="dark"] .msb{background:#374151;border-color:#4B5563;color:#F9FAFB}
-.fab{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom));right:calc(50% - 195px);width:52px;height:52px;border-radius:50%;background:#10B981;color:#fff;border:none;font-size:28px;font-weight:300;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.35);z-index:40;font-family:inherit;transition:transform .15s}
+.fab{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom));right:calc(50% - 195px);width:52px;height:52px;border-radius:50%;background:#10B981;color:#fff;border:none;font-size:28px;font-weight:300;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.35);z-index:40;font-family:inherit;transition:transform .2s}
 .fab:active{transform:scale(.9)}
+.fab.open{transform:rotate(45deg)}
 @media(max-width:430px){.fab{right:20px}}
+.fabm{position:fixed;bottom:calc(130px + env(safe-area-inset-bottom));right:calc(50% - 195px);z-index:40;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+@media(max-width:430px){.fabm{right:20px}}
+.fabi{display:flex;align-items:center;gap:8px;cursor:pointer;animation:fi .25s ease both}
+@keyframes fi{from{opacity:0;transform:translateY(12px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+.fabm.closing .fabi{animation:fo .18s ease both}
+@keyframes fo{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(12px) scale(.9)}}
+.fabl{padding:6px 12px;border-radius:10px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:12px;font-weight:600;color:#1F2937;white-space:nowrap}
+.fabb{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+[data-theme="dark"] .fabl{background:#1F2937;color:#F9FAFB}
+.scanw{position:fixed;inset:0;z-index:200;background:#000;display:flex;flex-direction:column}
+.scanh{display:flex;align-items:center;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));gap:12px}
+.scanh button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:8px 14px;border-radius:10px;font-size:14px;font-family:inherit;cursor:pointer}
+.scanv{flex:1;position:relative;overflow:hidden}
+.scanr{padding:16px;background:#111;text-align:center}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 var e=React.createElement,us=React.useState,uc=React.useCallback,um=React.useMemo;
 var FOOD_DB=[
@@ -364,6 +380,39 @@ var _dpi=us(""),detPlIn=_dpi[0],setDetPlIn=_dpi[1];
 var _ddt=us(null),detDate=_ddt[0],setDetDate=_ddt[1];
 var _plSug=us([]),plSug=_plSug[0],setPlSug=_plSug[1];
 var _viewS=us(null),viewSess=_viewS[0],setViewSess=_viewS[1];
+var _fabOpen=us(false),fabOpen=_fabOpen[0],setFabOpen=_fabOpen[1];
+var _fabClosing=us(false),fabClosing=_fabClosing[0],setFabClosing=_fabClosing[1];
+var toggleFab=function(){if(fabOpen){setFabClosing(true);setTimeout(function(){setFabOpen(false);setFabClosing(false)},200)}else{setFabOpen(true)}};
+var _scanning=us(false),scanning=_scanning[0],setScanning=_scanning[1];
+var _scanRes=us(null),scanRes=_scanRes[0],setScanRes=_scanRes[1];
+var _scanLoad=us(false),scanLoad=_scanLoad[0],setScanLoad=_scanLoad[1];
+var scanRef=React.useRef(null);
+
+var startScan=function(){
+  setScanning(true);setScanRes(null);setFabOpen(false);
+  setTimeout(function(){
+    if(scanRef.current)return;
+    var sc=new Html5Qrcode("scan-reader");
+    scanRef.current=sc;
+    sc.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:120},formatsToSupport:[0,1,2,3,4,5,6,7,8,9,10,11]},function(text){
+      sc.stop().then(function(){scanRef.current=null});
+      setScanLoad(true);
+      fetch("https://world.openfoodfacts.org/api/v2/product/"+encodeURIComponent(text)+".json?fields=product_name,nutriments,serving_size")
+      .then(function(r){return r.json()})
+      .then(function(d){
+        setScanLoad(false);
+        if(d.status===1&&d.product&&d.product.product_name){
+          var n=d.product.nutriments||{};
+          setScanRes({id:"scan_"+text,name:d.product.product_name,por:d.product.serving_size||"100g",kcal:Math.round(n["energy-kcal_100g"]||n["energy-kcal"]||0),prot:Math.round(n.proteins_100g||n.proteins||0),kh:Math.round(n.carbohydrates_100g||n.carbohydrates||0),vet:Math.round(n.fat_100g||n.fat||0),cat:"online",barcode:text});
+        }else{setScanRes({error:"Product niet gevonden"})}
+      }).catch(function(){setScanLoad(false);setScanRes({error:"Zoeken mislukt"})});
+    },function(){}).catch(function(err){console.log("scan err",err)});
+  },300);
+};
+var stopScan=function(){
+  if(scanRef.current){try{scanRef.current.stop().then(function(){scanRef.current=null})}catch(x){scanRef.current=null}}
+  setScanning(false);setScanRes(null);setScanLoad(false);
+};
 var copyYest=function(){var yi=sel===0?6:sel-1;var ym=wd.meals[yi];if(!ym||!Object.keys(ym).length)return;upd(function(w){if(!w.meals[sel])w.meals[sel]={};Object.values(ym).forEach(function(it){var id=it.id+"_"+Date.now()+Math.random();w.meals[sel][id]=Object.assign({},it)});return w})};
 var _sh=us(1),sH=_sh[0],setSH=_sh[1];
 var _sm2=us(0),sM=_sm2[0],setSM=_sm2[1];
@@ -486,7 +535,7 @@ var filt=um(function(){var h=new Date().getHours(),co;if(h<11)co=["mijn","ontbij
 var fg=um(function(){var g=[],lc=null;filt.items.forEach(function(f){if(f.cat!==lc){g.push({t:"h",cat:f.cat});lc=f.cat}g.push({t:"i",f:f})});return g},[filt]);
 
 // NAV
-function nav(){if(showAdd||showSet||showW||showDetail||viewSess)return null;return e("div",{className:"nv"},
+function nav(){if(showAdd||showSet||showW||showDetail||viewSess||scanning)return null;return e("div",{className:"nv"},
 e("div",{className:"nvx"},
 e("div",{className:"nvw"},
 [{id:"planning",l:"Planning",ic:iCal},{id:"voeding",l:"Voeding",ic:iFork},{id:"progressie",l:"Progressie",ic:iClk}].map(function(t){
@@ -613,7 +662,28 @@ e("div",{style:{paddingTop:12,borderTop:"1px solid "+(dark?"#374151":"#F3F4F6")}
 e("div",{style:{marginTop:16,padding:"12px",borderRadius:12,background:dark?"#374151":"#F3F4F6",textAlign:"center"}},e("div",{style:{fontSize:12,color:"#9CA3AF"}},"Shredded Summer v2.0"),e("div",{style:{fontSize:11,color:"#D1D5DB",marginTop:2}},"\u{1F98D} Gebouwd met Claude")))
 )):null,
 e("div",{className:"cn"},tab==="planning"?planTab():tab==="voeding"?voedTab():progTab()),
-tab==="voeding"&&!showAdd&&!showSet&&!showW&&!showDetail&&!viewSess?e("button",{className:"fab",onClick:function(){setCatPref(null);setShowAdd(true)}},"+"):null,
+tab==="voeding"&&!showAdd&&!showSet&&!showW&&!showDetail&&!viewSess&&!scanning?[
+fabOpen?e("div",{key:"fabm",className:"fabm"+(fabClosing?" closing":"")},
+e("div",{className:"fabi",style:{animationDelay:fabClosing?"0s":".12s"},onClick:function(){setFabOpen(false);setFabClosing(false);setCatPref(null);setShowAdd(true)}},e("span",{className:"fabl"},"Zoek item"),e("div",{className:"fabb",style:{background:"#6366F1",color:"#fff"}},e("svg",{width:18,height:18,viewBox:"0 0 24 24",fill:"none",stroke:"#fff",strokeWidth:2.5},e("circle",{cx:11,cy:11,r:8}),e("line",{x1:21,y1:21,x2:16.65,y2:16.65})))),
+e("div",{className:"fabi",style:{animationDelay:fabClosing?".06s":".06s"},onClick:function(){setFabOpen(false);setFabClosing(false);startScan()}},e("span",{className:"fabl"},"Scan barcode"),e("div",{className:"fabb",style:{background:"#F59E0B",color:"#fff"}},e("svg",{width:18,height:18,viewBox:"0 0 24 24",fill:"none",stroke:"#fff",strokeWidth:2},e("path",{d:"M3 7V5a2 2 0 012-2h2"}),e("path",{d:"M17 3h2a2 2 0 012 2v2"}),e("path",{d:"M21 17v2a2 2 0 01-2 2h-2"}),e("path",{d:"M7 21H5a2 2 0 01-2-2v-2"}),e("line",{x1:7,y1:12,x2:17,y2:12})))),
+e("div",{className:"fabi",style:{animationDelay:fabClosing?".12s":"0s"},onClick:function(){setFabOpen(false);setFabClosing(false);setShowMan(true);setCatPref(null);setShowAdd(true)}},e("span",{className:"fabl"},"Manueel"),e("div",{className:"fabb",style:{background:"#10B981",color:"#fff"}},e("svg",{width:18,height:18,viewBox:"0 0 24 24",fill:"none",stroke:"#fff",strokeWidth:2.5},e("line",{x1:12,y1:5,x2:12,y2:19}),e("line",{x1:5,y1:12,x2:19,y2:12}))))
+):null,
+e("button",{key:"fab",className:"fab"+(fabOpen?" open":""),onClick:toggleFab},"+")
+]:null,
+scanning?e("div",{key:"scanw",className:"scanw"},
+e("div",{className:"scanh"},e("button",{onClick:stopScan},"\u2190 Terug"),e("span",{style:{color:"#fff",fontSize:16,fontWeight:700,flex:1,textAlign:"center"}},"Scan barcode")),
+e("div",{className:"scanv"},e("div",{id:"scan-reader",style:{width:"100%",height:"100%"}})),
+scanLoad?e("div",{className:"scanr"},e("div",{style:{color:"#F59E0B",fontSize:14,fontWeight:600}},"Product opzoeken...")):null,
+scanRes?e("div",{className:"scanr"},
+scanRes.error?e("div",null,e("div",{style:{color:"#EF4444",fontSize:14,fontWeight:600}},scanRes.error),e("button",{style:{marginTop:10,padding:"10px 20px",borderRadius:12,background:"#374151",color:"#fff",border:"none",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"},onClick:function(){setScanRes(null);startScan()}},"Opnieuw scannen")):
+e("div",null,
+e("div",{style:{color:"#10B981",fontSize:16,fontWeight:700,marginBottom:4}},scanRes.name),
+e("div",{style:{color:"#9CA3AF",fontSize:12,marginBottom:8}},scanRes.por+" - "+scanRes.kcal+" kcal / "+scanRes.prot+"g eiwit / "+scanRes.kh+"g koolh / "+scanRes.vet+"g vet"),
+e("div",{style:{display:"flex",gap:8,justifyContent:"center"}},
+e("button",{style:{padding:"10px 20px",borderRadius:12,background:"#10B981",color:"#fff",border:"none",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"},onClick:function(){addM(scanRes,1);stopScan()}},"Voeg toe"),
+e("button",{style:{padding:"10px 20px",borderRadius:12,background:"#374151",color:"#fff",border:"none",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"},onClick:function(){setScanRes(null);startScan()}},"Opnieuw")))
+):null
+):null,
 nav())}
 ReactDOM.createRoot(document.getElementById("root")).render(e(App));
 </script>
